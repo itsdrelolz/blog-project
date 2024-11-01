@@ -1,19 +1,23 @@
 import { PrismaClient } from '@prisma/client';
 import { UserModel } from '../models/user.model';
 import jwt from 'jsonwebtoken';
-
+import type { Request, Response } from 'express';
+import type { RequestHandler } from 'express'; // Add this import
+import { CreateUserData, loginData } from '../models/user.model';
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || ' ';
 
+
 const authController = {
-  signup: async (req, res) => {
+  signup: (async (req: Request<{}, {}, CreateUserData>, res: Response) => {
     try {
       const { email, password, name } = req.body;
 
       if (!email || !password || !name) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Missing required fields',
         });
+        return;
       }
 
       const existingUser = await prisma.user.findUnique({
@@ -21,11 +25,12 @@ const authController = {
       });
 
       if (existingUser) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'User with this email already exists',
         });
+        return;
       }
-      // password hashed in UserModel
+
       const user = await UserModel.create({
         email,
         password,
@@ -41,7 +46,7 @@ const authController = {
         JWT_SECRET,
         {
           expiresIn: '24h',
-        },
+        }
       );
 
       const { password: _, ...userWithoutPassword } = user;
@@ -56,24 +61,33 @@ const authController = {
         error: 'Internal server error during signup',
       });
     }
-  },
+  }) as RequestHandler,
 
-  login: async (req, res) => {
+  login: (async (req: Request<{}, {}, loginData>, res: Response) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, confirmPassword } = req.body;
 
-      if (!email || !password) {
-        return res.status(400).json({
-          error: 'Email and password are required',
+      if (!email || !password || !confirmPassword) {
+        res.status(400).json({
+          error: 'Email, password, and password confirmation are required',
         });
+        return;
+      }
+
+       if (password !== confirmPassword) {
+        res.status(400).json({
+          error: 'Passwords do not match',
+        });
+        return;
       }
 
       const user = await UserModel.verifyLogin({ email, password });
 
       if (!user) {
-        return res.status(401).json({
+        res.status(401).json({
           error: 'Invalid credentials',
         });
+        return;
       }
 
       const token = jwt.sign(
@@ -83,7 +97,7 @@ const authController = {
           role: user.role,
         },
         JWT_SECRET,
-        { expiresIn: '24h' },
+        { expiresIn: '24h' }
       );
 
       const { password: _, ...userWithoutPassword } = user;
@@ -98,7 +112,7 @@ const authController = {
         error: 'Internal server error during login',
       });
     }
-  },
+  }) as RequestHandler,
 };
 
 export default authController;

@@ -1,252 +1,290 @@
 import { PrismaClient } from '@prisma/client';
-import type { Request, Response } from 'express';
+import type { Request, Response, RequestHandler } from 'express';
+
+interface RequestUser {
+  id: number;
+  role: 'READER' | 'CREATOR' | 'ADMIN';
+  email: string;
+}
 
 
 
 
 const prisma = new PrismaClient();
 
-
-  export const getAllPosts =  async (_req: Request, res: Response): Promise<Response> => {
-    try {
-      const posts = await prisma.post.findMany({
-        where: {
-          published: true,
-        },
-        include: {
-          author: {
-            select: {
-              email: true,
-            },
+export const getAllPosts: RequestHandler = async (_req, res) => {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+      },
+      include: {
+        author: {
+          select: {
+            email: true,
+            name: true,
           },
         },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-      return res.status(200).json({ posts });
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      return res.status(500).json({
-        error: 'Failed to fetch posts',
-      });
-    }
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    res.status(200).json({ posts });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({
+      error: 'Failed to fetch posts',
+    });
   }
+};
 
+export const getPost: RequestHandler = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
 
-  export const getPost = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      res.status(400).json({
+        error: 'Invalid post ID',
+      });
+      return;
+    }
 
-      if (isNaN(id)) {
-        return res.status(400).json({
-          error: 'Invalid post ID',
-        });
-      }
-
-      const post = await prisma.post.findUnique({
-        where: {
-          id,
-        },
-        include: {
-          author: {
-            select: {
-              email: true,
-            },
+    const post = await prisma.post.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        author: {
+          select: {
+            email: true,
+            name: true,
           },
         },
-      });
-    
+      },
+    });
 
-      if (!post) {
-        return res.status(404).json({
-          error: 'Post not found',
-        });
-      }
-
-      if (!post.published) {
-        return res.status(403).json({
-          error: 'Post not available',
-        });
-      }
-      return res.status(200).json({
-        post,
+    if (!post) {
+      res.status(404).json({
+        error: 'Post not found',
       });
-    } catch (error) {
-      console.error(`Error fetching post ${error}`);
-      return res.status(500).json({
-        error: 'Error fetching post',
-      });
+      return;
     }
+
+    if (!post.published) {
+      res.status(403).json({
+        error: 'Post not available',
+      });
+      return;
+    }
+    res.status(200).json({ post });
+  } catch (error) {
+    console.error(`Error fetching post ${error}`);
+    res.status(500).json({
+      error: 'Error fetching post',
+    });
   }
+};
 
-  export const getUserPosts = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const userId = req.user?.id;
+export const getUserPosts: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.user?.id;
 
-      if (!userId) {
-        return res.status(401).json({
-          error: 'User not authenticated',
-        });
-      }
+    if (!userId) {
+      res.status(401).json({
+        error: 'User not authenticated',
+      });
+      return;
+    }
 
-      const posts = await prisma.post.findMany({
-        where: {
-          authorId: userId,
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            email: true,
+          },
         },
-        orderBy: {
-          createdAt: 'desc',
+      },
+    });
+    res.status(200).json({ posts });
+  } catch (error) {
+    console.error(`Error fetching posts: ${error}`);
+    res.status(500).json({
+      error: 'Failed to fetch posts',
+    });
+  }
+};
+
+export const createPost: RequestHandler = async (req, res) => {
+  try {
+    const { title, content } = req.body;
+
+    if (!req.user) {
+      res.status(401).json({
+        error: 'User not authenticated',
+      });
+      return;
+    }
+
+    if (!title) {
+      res.status(400).json({
+        error: 'Title is required',
+      });
+      return;
+    }
+    if (!content) {
+      res.status(400).json({
+        error: 'Content is required',
+      });
+      return;
+    }
+    const authorId = req.user.id;
+
+    const post = await prisma.post.create({
+      data: {
+        title,
+        content,
+        authorId,
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            email: true,
+          },
         },
-      });
-      return res.status(200).json({ posts });
-    } catch (error) {
-      console.error(`Error fetching posts: ${error}`);
-      return res.status(500).json({
-        error: 'Failed to fetch posts',
-      });
-    }
+      },
+    });
+
+    res.status(201).json({ post });
+  } catch (error) {
+    console.error(`Error creating post: ${error}`);
+    res.status(500).json({
+      error: 'Failed to create post',
+    });
   }
+};
 
-  export const createPost = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const { title, content } = req.body;
+export const updatePost: RequestHandler = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { title, content, published } = req.body;
 
-      if (!req.user) {
-        return res.status(401).json({
-          error: 'User not authenticated',
-        });
-      }
+    if (isNaN(id)) {
+      res.status(400).json({
+        error: 'Invalid post ID',
+      });
+      return;
+    }
 
-      if (!title) {
-        return res.status(400).json({
-          error: 'Title is required',
-        });
-      }
-      if (!content) {
-        return res.status(400).json({
-          error: 'Content is required',
-        });
-      }
-      const authorId = req.user.id;
+    if (!req.user) {
+      res.status(401).json({
+        error: 'User not authenticated',
+      });
+      return;
+    }
 
-      const post = await prisma.post.create({
-        data: {
-          title,
-          content,
-          authorId,
+    const existingPost = await prisma.post.findUnique({
+      where: { id },
+    });
+
+    if (!existingPost) {
+      res.status(404).json({
+        error: 'Post not found',
+      });
+      return;
+    }
+
+    if (existingPost.authorId !== req.user.id && req.user.role !== 'ADMIN') {
+      res.status(403).json({
+        error: 'Not authorized to update this post',
+      });
+      return;
+    }
+
+    const post = await prisma.post.update({
+      where: { id },
+      data: {
+        title: title || undefined,
+        content: content || undefined,
+        published: published === undefined ? undefined : published,
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            email: true,
+          },
         },
-      });
+      },
+    });
 
-      return res.status(201).json({
-        post,
-      });
-    } catch (error) {
-      console.error(`Error creating post: ${error}`);
-      return res.status(500).json({
-        error: 'Failed to create post',
-      });
-    }
+    res.status(200).json({ post });
+  } catch (error) {
+    console.error(`Error updating post: ${error}`);
+    res.status(500).json({
+      error: 'Failed to update post',
+    });
   }
+};
 
-  export const updatePost = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const id = parseInt(req.params.id);
-      const { title, content, published } = req.body;
+export const deletePost: RequestHandler = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
 
-      if (isNaN(id)) {
-        return res.status(400).json({
-          error: 'Invalid post ID',
-        });
-      }
-
-      if (!req.user) {
-        return res.status(401).json({
-          error: 'User not authenticated',
-        });
-      }
-
-      // Check if post exists and user is the author
-      const existingPost = await prisma.post.findUnique({
-        where: { id },
+    if (isNaN(id)) {
+      res.status(400).json({
+        error: 'Invalid post ID',
       });
-
-      if (!existingPost) {
-        return res.status(404).json({
-          error: 'Post not found',
-        });
-      }
-
-      if (existingPost.authorId !== req.user.id && req.user.role !== 'ADMIN') {
-        return res.status(403).json({
-          error: 'Not authorized to update this post',
-        });
-      }
-
-      const post = await prisma.post.update({
-        where: { id },
-        data: {
-          title: title || undefined,
-          content: content || undefined,
-          published: published === undefined ? undefined : published,
-        },
-      });
-
-      return res.status(200).json({ post });
-    } catch (error) {
-      console.error(`Error updating post: ${error}`);
-      return res.status(500).json({
-        error: 'Failed to update post',
-      });
+      return;
     }
-  }
 
-  export const deletePost = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const id = parseInt(req.params.id);
-
-      if (isNaN(id)) {
-        return res.status(400).json({
-          error: 'Invalid post ID',
-        });
-      }
-
-      if (!req.user) {
-        return res.status(401).json({
-          error: 'User not authenticated',
-        });
-      }
-
-      // Check if post exists and user is the author
-      const post = await prisma.post.findUnique({
-        where: { id },
+    if (!req.user) {
+      res.status(401).json({
+        error: 'User not authenticated',
       });
-
-      if (!post) {
-        return res.status(404).json({
-          error: 'Post not found',
-        });
-      }
-
-      if (post.authorId !== req.user.id && req.user.role !== 'ADMIN') {
-        return res.status(403).json({
-          error: 'Not authorized to delete this post',
-        });
-      }
-
-      await prisma.post.delete({
-        where: { id },
-      });
-
-      return res.status(204).send();
-    } catch (error) {
-      console.error(`Error deleting post: ${error}`);
-      return res.status(500).json({
-        error: 'Failed to delete post',
-      });
+      return;
     }
-  }
 
-  export const postsController = {
+    const post = await prisma.post.findUnique({
+      where: { id },
+    });
+
+    if (!post) {
+      res.status(404).json({
+        error: 'Post not found',
+      });
+      return;
+    }
+
+    if (post.authorId !== req.user.id && req.user.role !== 'ADMIN') {
+      res.status(403).json({
+        error: 'Not authorized to delete this post',
+      });
+      return;
+    }
+
+    await prisma.post.delete({
+      where: { id },
+    });
+
+    res.status(204).send();
+  } catch (error) {
+    console.error(`Error deleting post: ${error}`);
+    res.status(500).json({
+      error: 'Failed to delete post',
+    });
+  }
+};
+
+export default {
   getAllPosts,
   getPost,
   getUserPosts,

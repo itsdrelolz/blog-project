@@ -6,6 +6,7 @@ import cors from 'cors';
 
 import creatorRouter from '../src/routes/creator.routes';
 import publicRouter from '../src/routes/public.routes';
+import { authMiddleware } from './middleware/auth.middleware';
 const app = express();
 
 dotenv.config();
@@ -18,7 +19,7 @@ app.use(passport.initialize());
 app.use('/api/auth', authRouter);
 
 // this line should be app.use(Authmiddleware) we need to check if the user is signed in to be able to use the routes
-
+app.use(authMiddleware)
 // public routes
 app.use('/api/public', publicRouter);
 // creator only routes

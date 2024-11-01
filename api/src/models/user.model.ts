@@ -31,7 +31,8 @@ export interface CreateUserData {
 
 export interface loginData { 
     email: string; 
-    password: string
+    password: string;
+    confirmPassword?: string;
 }
 
 declare global {

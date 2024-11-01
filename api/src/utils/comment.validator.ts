@@ -19,7 +19,7 @@ export const commentValidators = {
       .escape()
   ],
 
-  updatePost: [
+  updateComment: [
     body('title')
     .optional()
     .trim()
