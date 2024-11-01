@@ -1,57 +1,67 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// schema.prisma
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["deno"]
 }
-
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-enum Role { 
-  READER 
+enum Role {
+  READER
   CREATOR
   ADMIN
 }
 
 model Post {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String    @db.VarChar(255)
+  content   String    @db.Text
+  published Boolean   @default(false)
+  
+  // Relations
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+  comments  Comment[]
+
+  
+  @@index([authorId])
+  @@index([published])
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(100)  
+  email    String   @unique @db.VarChar(255)
+  password String   
+  role     Role     @default(READER)
+
+
+  posts    Post[]
+  comments Comment[]
+
+ 
+  @@index([email])
+  @@index([role])
+}
+
+model Comment {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
+  content   String   @db.Text 
+  
+
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
-  comments Comment[]
-}
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
 
-
-model User { 
-  id Int @id @default(autoincrement())
-  name String 
-  email String @unique
-  password String
-  role Role @default(READER) 
-  posts Post[]
-  comments Comment[]
-}
-
-
-model Comment { 
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  content String? 
-  author User @relation(fields: [authorId], references: [id])
-  authorId Int
-  post Post @relation(fields: [postId], references: [id])
-  postId Int
+  // Indexes
+  @@index([authorId])
+  @@index([postId])
 }

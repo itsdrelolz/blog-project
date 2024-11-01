@@ -1,24 +1,28 @@
-import { Router } from "express";
-import postsController from "../controllers/posts.controller";
-import commentsController from "../controllers/comments.controller";
-import { checkCreatorRole } from "../middleware/auth.middleware";
+import { Router } from 'express';
+import { 
+  getAllPosts, 
+  getPost, 
+  getUserPosts, 
+  createPost, 
+  updatePost, 
+  deletePost 
+} from '../controllers/posts.controller';
+import { checkCreatorRole } from '../middleware/auth.middleware';
+import { postValidators } from '../utils/post.validator';
 const router = Router();
-
 
 /*
 takes user to the dashboard where they can view all of their existing posts
 */
 
 router.use(checkCreatorRole);
-router.get("/dashboard", postsController.getUserPosts); 
+router.get('/dashboard', getUserPosts);
 
 // allows a user to create a post
-router.post("/posts", postsController.createPost);
+router.post('/posts', postValidators.createPost, createPost);
 // allows a user to update a post
-router.put("/:postId", postsController.updatePost);
+router.put('/:postId', postValidators.updatePost, updatePost);
 // allows a user to delete a post
-router.delete("/:postId", postsController.deletePost);
-
-
+router.delete('/:postId', deletePost);
 
 export default router;
