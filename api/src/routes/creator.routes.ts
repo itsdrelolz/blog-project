@@ -21,8 +21,8 @@ router.get('/dashboard', getUserPosts);
 // allows a user to create a post
 router.post('/posts', postValidators.createPost, createPost);
 // allows a user to update a post
-router.put('/:postId', postValidators.updatePost, updatePost);
+router.put('/posts/:id', postValidators.updatePost, updatePost);
 // allows a user to delete a post
-router.delete('/:postId', deletePost);
+router.delete('/posts/:id', deletePost);
 
 export default router;
