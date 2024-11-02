@@ -18,7 +18,7 @@ app.use(passport.initialize());
 // public auth routes
 app.use('/api/auth', authRouter);
 
-// this line should be app.use(Authmiddleware) we need to check if the user is signed in to be able to use the routes
+
 app.use(authMiddleware)
 // public routes
 app.use('/api/public', publicRouter);
