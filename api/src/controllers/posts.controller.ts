@@ -1,14 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import type { Request, Response, RequestHandler } from 'express';
-
-interface RequestUser {
-  id: number;
-  role: 'READER' | 'CREATOR' | 'ADMIN';
-  email: string;
-}
-
-
-
+import type { RequestHandler } from 'express';
 
 const prisma = new PrismaClient();
 
@@ -22,7 +13,6 @@ export const getAllPosts: RequestHandler = async (_req, res) => {
         author: {
           select: {
             email: true,
-            name: true,
           },
         },
       },
@@ -58,7 +48,19 @@ export const getPost: RequestHandler = async (req, res) => {
         author: {
           select: {
             email: true,
-            name: true,
+          },
+        },
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                email: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
           },
         },
       },
@@ -107,7 +109,6 @@ export const getUserPosts: RequestHandler = async (req, res) => {
       include: {
         author: {
           select: {
-            name: true,
             email: true,
           },
         },
@@ -156,7 +157,6 @@ export const createPost: RequestHandler = async (req, res) => {
       include: {
         author: {
           select: {
-            name: true,
             email: true,
           },
         },
@@ -219,7 +219,6 @@ export const updatePost: RequestHandler = async (req, res) => {
       include: {
         author: {
           select: {
-            name: true,
             email: true,
           },
         },

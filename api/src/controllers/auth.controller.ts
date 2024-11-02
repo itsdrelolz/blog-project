@@ -7,7 +7,6 @@ import { CreateUserData, loginData } from '../models/user.model';
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || ' ';
 
-
 const authController = {
   signup: (async (req: Request<{}, {}, CreateUserData>, res: Response) => {
     try {
@@ -46,7 +45,7 @@ const authController = {
         JWT_SECRET,
         {
           expiresIn: '24h',
-        }
+        },
       );
 
       const { password: _, ...userWithoutPassword } = user;
@@ -74,7 +73,7 @@ const authController = {
         return;
       }
 
-       if (password !== confirmPassword) {
+      if (password !== confirmPassword) {
         res.status(400).json({
           error: 'Passwords do not match',
         });
@@ -97,7 +96,7 @@ const authController = {
           role: user.role,
         },
         JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '24h' },
       );
 
       const { password: _, ...userWithoutPassword } = user;

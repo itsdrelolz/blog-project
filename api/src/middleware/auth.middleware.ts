@@ -1,13 +1,8 @@
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import { UserRole } from "../models/user.model";
-import type { Request, Response, NextFunction } from "express";
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import { UserRole } from '../models/user.model';
+import type { Request, Response, NextFunction } from 'express';
 dotenv.config();
-
-
-
-
-
 
 // checks if a user is authenticated
 interface TokenPayload {
@@ -16,12 +11,10 @@ interface TokenPayload {
   email: string;
 }
 
-
-
 export const authMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   try {
     // Get token from Authorization header
@@ -42,37 +35,30 @@ export const authMiddleware = (
 
     // Verify token
     const decoded = jwt.verify(
-      token, 
-      process.env.JWT_SECRET || ' '
+      token,
+      process.env.JWT_SECRET || ' ',
     ) as TokenPayload;
 
     // Add user data to request
     req.user = decoded;
-    
+
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
       res.status(401).json({ error: 'Invalid or expired token' });
       return;
     }
-    
+
     res.status(500).json({ error: 'Internal server error' });
     return;
   }
 };
 
-
-
-
-
-
-
-
 // checks if user has the correct role
 export const checkCreatorRole = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   try {
     if (!req.user) {

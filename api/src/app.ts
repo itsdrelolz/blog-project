@@ -18,8 +18,7 @@ app.use(passport.initialize());
 // public auth routes
 app.use('/api/auth', authRouter);
 
-
-app.use(authMiddleware)
+app.use(authMiddleware);
 // public routes
 app.use('/api/public', publicRouter);
 // creator only routes

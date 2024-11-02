@@ -1,11 +1,9 @@
 import { Router } from 'express';
-import { 
-  getAllPosts, 
-  getPost, 
-  getUserPosts, 
-  createPost, 
-  updatePost, 
-  deletePost 
+import {
+  getUserPosts,
+  createPost,
+  updatePost,
+  deletePost,
 } from '../controllers/posts.controller';
 import { checkCreatorRole } from '../middleware/auth.middleware';
 import { postValidators } from '../utils/post.validator';

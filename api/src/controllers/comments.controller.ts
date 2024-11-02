@@ -1,62 +1,78 @@
 import { PrismaClient } from '@prisma/client';
-import type { Request, Response } from 'express';
+import type { RequestHandler } from 'express';
 
 const prisma = new PrismaClient();
 
-const commentsController = {
-  addComment: async (req: Request, res: Response) => {
-    try {
-      const { content, postId } = req.body;
+export const addComment: RequestHandler = async (req, res) => {
+  try {
+    const { content } = req.body;
+    const postId = parseInt(req.params.postId);
 
-      if (!content) {
-        return res.status(400).json({
-          error: 'Comment content is required',
-        });
-      }
-
-      if (!postId) {
-        return res.status(400).json({
-          error: 'Post ID is required',
-        });
-      }
-
-      const post = await prisma.post.findUnique({
-        where: { id: postId },
+    if (!req.user) {
+      res.status(401).json({
+        error: 'User not authenticated',
       });
+      return;
+    }
 
-      if (!post) {
-        return res.status(404).json({
-          error: 'Post not found',
-        });
-      }
+    if (!content) {
+      res.status(400).json({
+        error: 'Comment content is required',
+      });
+      return;
+    }
 
-      const authorId = req.user.id;
+    if (isNaN(postId)) {
+      res.status(400).json({
+        error: 'Invalid post ID',
+      });
+      return;
+    }
 
-      // Create comment with post connection
-      const comment = await prisma.comment.create({
-        data: {
-          content,
-          authorId,
-          postId, // Connect to the post
-        },
-        include: {
-          author: {
-            select: {
-              email: true,
-            },
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      res.status(404).json({
+        error: 'Post not found',
+      });
+      return;
+    }
+
+    const authorId = req.user.id;
+
+    // Create comment with post connection
+    const comment = await prisma.comment.create({
+      data: {
+        content,
+        authorId,
+        postId,
+      },
+      include: {
+        author: {
+          select: {
+            email: true,
           },
         },
-      });
-      return res.status(201).json({
-        comment,
-      });
-    } catch (error) {
-      console.error(`Error creating comment: ${error}`);
-      return res.status(500).json({
-        error: 'Failed creating a comment',
-      });
-    }
-  },
+      },
+    });
+
+    res.status(201).json({
+      comment,
+    });
+  } catch (error) {
+    console.error(`Error creating comment: ${error}`);
+    res.status(500).json({
+      error: 'Failed creating a comment',
+    });
+  }
 };
 
-export default commentsController;
+export const getPostComments: RequestHandler = async (req, res) => {};
+
+export const getPostComment: RequestHandler = async (req, res) => {};
+
+export const updateComment: RequestHandler = async (req, res) => {};
+
+export const deleteComment: RequestHandler = async (req, res) => {};
