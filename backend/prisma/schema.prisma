@@ -1,0 +1,67 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  READER
+  CREATOR
+  ADMIN
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String    @db.VarChar(255)
+  content   String    @db.Text
+  published Boolean   @default(false)
+  
+  // Relations
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+  comments  Comment[]
+
+  
+  @@index([authorId])
+  @@index([published])
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(100)  
+  email    String   @unique @db.VarChar(255)
+  password String   
+  role     Role     @default(READER)
+
+
+  posts    Post[]
+  comments Comment[]
+
+ 
+  @@index([email])
+  @@index([role])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String   @db.Text 
+  
+
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
+
+  // Indexes
+  @@index([authorId])
+  @@index([postId])
+}
