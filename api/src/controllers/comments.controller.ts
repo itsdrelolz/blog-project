@@ -77,7 +77,7 @@ export const addComment: RequestHandler = async (req, res) => {
 };
 
 export const getPostComments: RequestHandler = async (req, res) => {
- try {
+  try {
     if (!req.user) {
       res.status(401).json({
         error: 'User not authenticated',
@@ -93,47 +93,45 @@ export const getPostComments: RequestHandler = async (req, res) => {
       return;
     }
 
-    
-     const post = await prisma.post.findUnique({
+    const post = await prisma.post.findUnique({
       where: {
-        id: postId
-      }
+        id: postId,
+      },
     });
 
-
-  if (!post) {
+    if (!post) {
       res.status(404).json({
-        error: 'Post not found'
+        error: 'Post not found',
       });
       return;
     }
-    
-    const comments = await prisma.comment.findMany({ 
+
+    const comments = await prisma.comment.findMany({
       where: {
-        postId: postId
+        postId: postId,
       },
       include: {
         author: {
           select: {
-            email: true
-          }
-        }
+            email: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
 
     res.status(200).json({
-      comments
-    })
+      comments,
+    });
   } catch (error) {
     console.error(`Error fetching comments: ${error}`);
     res.status(500).json({
-      error: 'Error fetching comments'
-    })
+      error: 'Error fetching comments',
+    });
   }
-}; 
+};
 
 export const getPostComment: RequestHandler = async (req, res) => {
   try {
@@ -161,9 +159,7 @@ export const getPostComment: RequestHandler = async (req, res) => {
     }
 
     const comment = await prisma.comment.findFirst({
-      where: { id: commentId,
-        postId: postId
-       },
+      where: { id: commentId, postId: postId },
       include: {
         author: {
           select: {
@@ -172,23 +168,22 @@ export const getPostComment: RequestHandler = async (req, res) => {
         },
       },
     });
-    
-     if (!comment) {
+
+    if (!comment) {
       res.status(404).json({
         error: 'Comment not found',
       });
       return;
     }
 
-
     res.status(200).json({
-      comment
-    })
+      comment,
+    });
   } catch (error) {
     console.error(`Error fetching comment: ${error}`);
     res.status(500).json({
-      error: 'Error fetching comment'
-    })
+      error: 'Error fetching comment',
+    });
   }
 };
 
@@ -228,10 +223,10 @@ export const updateComment: RequestHandler = async (req, res) => {
 
     // Find the comment and verify it exists
     const existingComment = await prisma.comment.findFirst({
-      where: { 
+      where: {
         id: commentId,
-        postId: postId
-      }
+        postId: postId,
+      },
     });
 
     if (!existingComment) {
@@ -252,7 +247,7 @@ export const updateComment: RequestHandler = async (req, res) => {
     // Update the comment
     const updatedComment = await prisma.comment.update({
       where: {
-        id: commentId
+        id: commentId,
       },
       data: {
         content,
@@ -267,7 +262,7 @@ export const updateComment: RequestHandler = async (req, res) => {
     });
 
     res.status(200).json({
-      comment: updatedComment
+      comment: updatedComment,
     });
   } catch (error) {
     console.error(`Error updating comment: ${error}`);
@@ -289,7 +284,7 @@ export const deleteComment: RequestHandler = async (req, res) => {
     const postId = parseInt(req.params.postId);
     const commentId = parseInt(req.params.commentId);
 
-      if (isNaN(postId)) {
+    if (isNaN(postId)) {
       res.status(400).json({
         error: 'Invalid post ID',
       });
@@ -304,9 +299,7 @@ export const deleteComment: RequestHandler = async (req, res) => {
     }
 
     const comment = await prisma.comment.findFirst({
-      where: { id: commentId,
-        postId: postId
-       },
+      where: { id: commentId, postId: postId },
       include: {
         author: {
           select: {
@@ -315,14 +308,13 @@ export const deleteComment: RequestHandler = async (req, res) => {
         },
       },
     });
-    
-     if (!comment) {
+
+    if (!comment) {
       res.status(404).json({
         error: 'Comment not found',
       });
       return;
     }
-
 
     if (comment.authorId !== req.user.id && req.user.role !== 'ADMIN') {
       res.status(403).json({
