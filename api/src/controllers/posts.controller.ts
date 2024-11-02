@@ -3,8 +3,15 @@ import type { RequestHandler } from 'express';
 
 const prisma = new PrismaClient();
 
-export const getAllPosts: RequestHandler = async (_req, res) => {
+export const getAllPosts: RequestHandler = async (req, res) => {
   try {
+    if (!req.user) {
+      res.status(401).json({
+        error: 'User not authenticated',
+      });
+      return;
+    }
+
     const posts = await prisma.post.findMany({
       where: {
         published: true,
@@ -31,6 +38,13 @@ export const getAllPosts: RequestHandler = async (_req, res) => {
 
 export const getPost: RequestHandler = async (req, res) => {
   try {
+    if (!req.user) {
+      res.status(401).json({
+        error: 'User not authenticated',
+      });
+      return;
+    }
+
     const id = parseInt(req.params.id);
 
     if (isNaN(id)) {
@@ -90,14 +104,14 @@ export const getPost: RequestHandler = async (req, res) => {
 
 export const getUserPosts: RequestHandler = async (req, res) => {
   try {
-    const userId = req.user?.id;
-
-    if (!userId) {
+    if (!req.user) {
       res.status(401).json({
         error: 'User not authenticated',
       });
       return;
     }
+
+    const userId = req.user.id;
 
     const posts = await prisma.post.findMany({
       where: {
@@ -125,14 +139,14 @@ export const getUserPosts: RequestHandler = async (req, res) => {
 
 export const createPost: RequestHandler = async (req, res) => {
   try {
-    const { title, content } = req.body;
-
     if (!req.user) {
       res.status(401).json({
         error: 'User not authenticated',
       });
       return;
     }
+
+    const { title, content } = req.body;
 
     if (!title) {
       res.status(400).json({
@@ -174,19 +188,19 @@ export const createPost: RequestHandler = async (req, res) => {
 
 export const updatePost: RequestHandler = async (req, res) => {
   try {
+    if (!req.user) {
+      res.status(401).json({
+        error: 'User not authenticated',
+      });
+      return;
+    }
+
     const id = parseInt(req.params.id);
     const { title, content, published } = req.body;
 
     if (isNaN(id)) {
       res.status(400).json({
         error: 'Invalid post ID',
-      });
-      return;
-    }
-
-    if (!req.user) {
-      res.status(401).json({
-        error: 'User not authenticated',
       });
       return;
     }
@@ -236,18 +250,18 @@ export const updatePost: RequestHandler = async (req, res) => {
 
 export const deletePost: RequestHandler = async (req, res) => {
   try {
+    if (!req.user) {
+      res.status(401).json({
+        error: 'User not authenticated',
+      });
+      return;
+    }
+
     const id = parseInt(req.params.id);
 
     if (isNaN(id)) {
       res.status(400).json({
         error: 'Invalid post ID',
-      });
-      return;
-    }
-
-    if (!req.user) {
-      res.status(401).json({
-        error: 'User not authenticated',
       });
       return;
     }
