@@ -18,11 +18,12 @@ app.use(express.json());
 app.use(passport.initialize());
 
 // Public routes (no auth required)
-app.use('/api/auth', authRouter);
-app.use('/api/public', publicRouter);
+app.use('/auth', authRouter);
+
 
 // Protected routes (auth required)
-app.use('/api/creator', authMiddleware, creatorRouter);
+app.use('/public', authMiddleware, publicRouter);
+app.use('/creator', authMiddleware, creatorRouter);
 
 app.listen(PORT, () => {
   console.log(`App listening on port: ${PORT}`);

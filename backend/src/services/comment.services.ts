@@ -31,6 +31,38 @@ export class CommentService {
     });
   }
 
+  async getCommentById(commentId: number, postId: number) {
+    const post = await this.prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      throw new Error('Post not found');
+    }
+
+    const comment = await this.prisma.comment.findFirst({
+      where: {
+        id: commentId,
+        postId,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!comment) {
+      return null;
+    }
+
+    return comment;
+  }
+
   async getCommentsByPostId(postId: number) {
     const post = await this.prisma.post.findUnique({
       where: { id: postId },

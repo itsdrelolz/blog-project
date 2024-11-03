@@ -9,7 +9,7 @@ const commentsController = new CommentController(prisma);
 // GET routes
 router.get('/home', postController.getAllPosts); // Get all posts for homepage
 router.get('/posts/:postId/comments', commentsController.getPostComments); // Get all comments for a post
-router.get('/posts/:postId/comments/:commentId', ); // Get specific comment
+router.get('/posts/:postId/comments/:commentId', commentsController.getPostComment); // Get specific comment
 
 // POST route
 router.post(
