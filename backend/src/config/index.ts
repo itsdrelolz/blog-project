@@ -13,7 +13,7 @@ export default {
   databaseURL: process.env._DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET,
   logs: {
-    level: process.env.LOG_LEVEL || 'silly',
+    level: process.env.LOG_LEVEL || 'info',
   },
   api: {
     prefix: '/api',
