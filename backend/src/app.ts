@@ -5,7 +5,7 @@ import passport from 'passport';
 import cors from 'cors';
 import creatorRouter from './api/routes/creator.routes';
 import publicRouter from './api/routes/public.routes';
-import { authMiddleware } from './api/middleware/auth.middleware';
+import { authMiddleware } from './api/middlewares/auth.middleware';
 
 const app = express();
 
