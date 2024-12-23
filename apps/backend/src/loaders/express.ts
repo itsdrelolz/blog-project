@@ -14,7 +14,7 @@ export default ({ app }: { app: express.Application }) => {
 
   // Routes
   app.use('/auth', authRouter);
-  app.use('/public', publicRouter); // change public router controller everyone can view and comment on posts without an account
+  app.use('/public', publicRouter);
   app.use('/creator', authMiddleware, creatorRouter);
 
   // Error handling
