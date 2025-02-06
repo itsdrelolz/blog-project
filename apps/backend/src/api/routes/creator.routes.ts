@@ -12,6 +12,7 @@ takes user to the dashboard where they can view all of their existing posts
 export const postController = new PostController(prisma);
 
 router.use(checkCreatorRole);
+
 router.get('/dashboard', postController.getUserPosts);
 
 // allows a user to create a post

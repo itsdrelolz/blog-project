@@ -2,7 +2,7 @@
   "name": "my-monorepo",
   "private": true,
   "workspaces": [
-     "apps/*", 
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
@@ -11,6 +11,11 @@
     "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-router-dom": "^5.3.3",
     "prettier": "3.3.3"
+  },
+  "dependencies": {
+    "react-router-dom": "^7.1.5"
   }
 }
