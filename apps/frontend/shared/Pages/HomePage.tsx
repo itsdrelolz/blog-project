@@ -1,9 +1,10 @@
 
+import React from "react";
 
-const HomePage = () => { 
+const HomePage = ( ) => { 
     return ( 
-       <div className="">
-        
+       <div className="grid-rows-1 grid-cols-1">
+         
        </div>
     )
 }

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import logo from '../images/logo.png';
-
+import React from "react";
 
 const Header = () => {
     const userIsLoggedIn: boolean = false; 
@@ -16,9 +16,6 @@ const Header = () => {
       
         
           <div className="flex-1 text-center">
-            <Link to="/create-blog" className="hover:underline mr-4">
-              All Posts
-            </Link>
             <Link to="/create-blog" className="hover:underline mr-4">
               New Post
             </Link>

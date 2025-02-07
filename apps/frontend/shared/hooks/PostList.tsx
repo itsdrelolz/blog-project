@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { fetchPosts } from './postsApi';
-
-
+import React from 'react';
+import Post from '../components/Post';
 export const usePosts = () => { 
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(true)
@@ -14,14 +14,33 @@ export const usePosts = () => {
                 const data = await fetchPosts();
                 setPosts(data);
             } catch (error) { 
-                setError(error) 
+                setError(error)
+                console.error("Error creating post: ", error); 
             }
             finally {
                 setLoading(false)
             }
         };
             getPosts(); 
-         }, [])
+         }, []);
+
         
-        return { posts, loading, error };
+
+
+        if (loading) {
+            return <div>Loading...</div>;
+        }
+
+        if (error) { 
+            return <div>Error: {error.message}</div>;
+        }
+
+        return ( 
+            <div>
+            {posts.map((post) => (
+                <Post key={post.id} {...post} />
+            ))}
+                </div>
+        );
     }
+export default usePosts;
