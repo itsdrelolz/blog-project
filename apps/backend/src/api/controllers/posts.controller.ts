@@ -12,7 +12,17 @@ class PostController {
     this.postService = new PostService(prisma);
   }
 
+  public async getPublishedPosts(req: Request, res: Response): Promise<Response> {
+    try {
+      const posts = await this.postService.findAllPublished();
+      return res.json({ posts });
+    } catch (error) {
+      console.error("Error getting published posts:", error);
+      return res.status(500).json({ error: 'Failed to get posts' });
+    }
+  }
 
+  
   public async getPost(req: Request, res: Response): Promise<Response> {
     try {
       const user = req.user as User;
