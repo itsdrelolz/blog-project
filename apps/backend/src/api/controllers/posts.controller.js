@@ -9,201 +9,116 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PostController = void 0;
 const client_1 = require("@prisma/client");
 const post_services_1 = require("../../services/post.services");
 class PostController {
     constructor(prisma) {
-        this.getAllPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.postService = new post_services_1.PostService(prisma);
+    }
+    getPublishedPosts(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({
-                        error: 'User not authenticated',
-                    });
-                    return;
-                }
-                const user = req.user;
                 const posts = yield this.postService.findAll();
-                res.json({ posts });
+                return res.json({ posts });
             }
             catch (error) {
-                console.error('Error fetching posts:', error);
-                res.status(500).json({
-                    error: 'Failed to fetch posts',
-                });
+                console.error("Error getting published posts:", error);
+                return res.status(500).json({ error: 'Failed to get posts' });
             }
         });
-        this.getUserPosts = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    }
+    //get user only post 
+    getPost(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({
-                        error: 'User not authenticated',
-                    });
-                    return;
-                }
-                const user = req.user;
-                const posts = yield this.postService.findByAuthorId(user.id);
-                res.json({ posts });
-            }
-            catch (error) {
-                console.error('Error fetching user posts:', error);
-                res.status(500).json({
-                    error: 'Failed to fetch posts',
-                });
-            }
-        });
-        this.getPost = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                if (!req.user) {
-                    res.status(401).json({
-                        error: 'User not authenticated',
-                    });
-                    return;
-                }
                 const user = req.user;
                 const id = parseInt(req.params.id);
                 if (isNaN(id)) {
-                    res.status(400).json({
-                        error: 'Invalid post ID',
-                    });
-                    return;
+                    return res.status(400).json({ error: 'Invalid post ID' });
                 }
                 const post = yield this.postService.findById(id);
                 if (!post) {
-                    res.status(404).json({
-                        error: 'Post not found',
-                    });
-                    return;
+                    return res.status(404).json({ error: 'Post not found' });
                 }
-                if (!post.published &&
-                    post.authorId !== user.id &&
-                    user.role !== client_1.Role.ADMIN) {
-                    res.status(403).json({
-                        error: 'Post not available',
-                    });
-                    return;
+                const canView = post.published ||
+                    post.authorId === user.id ||
+                    user.role === client_1.Role.ADMIN;
+                if (!canView) {
+                    return res.status(403).json({ error: 'Post not available' });
                 }
-                res.json({ post });
+                return res.json({ post });
             }
             catch (error) {
-                console.error('Error fetching post:', error);
-                res.status(500).json({
-                    error: 'Error fetching post',
-                });
+                console.error("Error getting post:", error);
+                res.status(500).json({ error: 'Failed to get post' });
+                return res.status(500).json({ error: 'Failed to get post' });
             }
         });
-        this.createPost = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    }
+    createPost(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({
-                        error: 'User not authenticated',
-                    });
-                    return;
-                }
                 const user = req.user;
                 const { title, content } = req.body;
                 if (!title || !content) {
-                    res.status(400).json({
-                        error: 'Title and content are required',
-                    });
-                    return;
+                    return res.status(400).json({ error: 'Title and content are required' });
                 }
-                const post = yield this.postService.create(user.id, {
-                    title,
-                    content,
-                    published: false,
-                });
-                res.status(201).json({ post });
+                const post = yield this.postService.create(user.id, { title, content, published: false });
+                return res.status(201).json({ post });
             }
             catch (error) {
                 console.error('Error creating post:', error);
-                res.status(500).json({
-                    error: 'Failed to create post',
-                });
+                return res.status(500).json({ error: 'Failed to create post' });
             }
         });
-        this.updatePost = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    }
+    updatePost(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({
-                        error: 'User not authenticated',
-                    });
-                    return;
-                }
                 const user = req.user;
                 const id = parseInt(req.params.id);
                 if (isNaN(id)) {
-                    res.status(400).json({
-                        error: 'Invalid post ID',
-                    });
-                    return;
+                    return res.status(400).json({ error: 'Invalid post ID' });
                 }
                 const existingPost = yield this.postService.findById(id);
                 if (!existingPost) {
-                    res.status(404).json({
-                        error: 'Post not found',
-                    });
-                    return;
+                    return res.status(404).json({ error: 'Post not found' });
                 }
-                if (existingPost.authorId !== user.id &&
-                    user.role !== client_1.Role.ADMIN) {
-                    res.status(403).json({
-                        error: 'Not authorized to update this post',
-                    });
-                    return;
+                if (existingPost.authorId !== user.id && user.role !== client_1.Role.ADMIN) {
+                    return res.status(403).json({ error: 'Not authorized to update this post' });
                 }
                 const post = yield this.postService.update(id, req.body);
-                res.json({ post });
+                return res.json({ post });
             }
             catch (error) {
                 console.error('Error updating post:', error);
-                res.status(500).json({
-                    error: 'Failed to update post',
-                });
+                return res.status(500).json({ error: 'Failed to update post' });
             }
         });
-        this.deletePost = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    }
+    deletePost(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({
-                        error: 'User not authenticated',
-                    });
-                    return;
-                }
                 const user = req.user;
                 const id = parseInt(req.params.id);
                 if (isNaN(id)) {
-                    res.status(400).json({
-                        error: 'Invalid post ID',
-                    });
-                    return;
+                    return res.status(400).json({ error: 'Invalid post ID' });
                 }
                 const existingPost = yield this.postService.findById(id);
                 if (!existingPost) {
-                    res.status(404).json({
-                        error: 'Post not found',
-                    });
-                    return;
+                    return res.status(404).json({ error: 'Post not found' });
                 }
-                if (existingPost.authorId !== user.id &&
-                    user.role !== client_1.Role.ADMIN) {
-                    res.status(403).json({
-                        error: 'Not authorized to delete this post',
-                    });
-                    return;
+                if (existingPost.authorId !== user.id && user.role !== client_1.Role.ADMIN) {
+                    return res.status(403).json({ error: 'Not authorized to delete this post' });
                 }
                 yield this.postService.delete(id);
-                res.status(204).send();
+                return res.status(204).send();
             }
             catch (error) {
                 console.error('Error deleting post:', error);
-                res.status(500).json({
-                    error: 'Failed to delete post',
-                });
+                return res.status(500).json({ error: 'Failed to delete post' });
             }
         });
-        this.postService = new post_services_1.PostService(prisma);
     }
 }
-exports.PostController = PostController;
 exports.default = PostController;

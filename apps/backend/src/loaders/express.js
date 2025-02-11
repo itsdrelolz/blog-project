@@ -17,12 +17,12 @@ exports.default = ({ app }) => {
     app.use(passport_1.default.initialize());
     // Routes
     app.use('/auth', auth_routes_1.default);
-    app.use('/public', auth_middleware_1.authMiddleware, public_routes_1.default);
+    app.use('/public', public_routes_1.default);
     app.use('/creator', auth_middleware_1.authMiddleware, creator_routes_1.default);
     // Error handling
     app.use((err, req, res, next) => {
         console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'Something went wrong!' });
     });
     return app;
 };

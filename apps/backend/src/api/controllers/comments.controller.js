@@ -9,158 +9,134 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommentController = void 0;
 const comment_services_1 = require("../../services/comment.services");
 class CommentController {
     constructor(prisma) {
-        this.addComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.commentService = new comment_services_1.CommentService(prisma);
+    }
+    addComment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({ error: 'User not authenticated' });
-                    return;
-                }
                 const user = req.user;
                 const { content } = req.body;
                 const postId = parseInt(req.params.postId);
                 if (!content) {
-                    res.status(400).json({ error: 'Comment content is required' });
-                    return;
+                    return res.status(400).json({ error: 'Comment content is required' });
                 }
                 if (isNaN(postId)) {
-                    res.status(400).json({ error: 'Invalid post ID' });
-                    return;
+                    return res.status(400).json({ error: 'Invalid post ID' });
                 }
                 const comment = yield this.commentService.createComment(user.id, {
                     content,
                     postId,
                 });
-                res.status(201).json({ comment });
+                return res.status(201).json({ comment });
             }
             catch (error) {
                 console.error('Error creating comment:', error);
                 if (error instanceof Error && error.message === 'Post not found') {
-                    res.status(404).json({ error: error.message });
-                    return;
+                    return res.status(404).json({ error: error.message });
                 }
-                res.status(500).json({ error: 'Failed creating a comment' });
+                return res.status(500).json({ error: 'Failed creating a comment' });
             }
         });
-        this.getPostComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    }
+    getPostComment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({ error: 'User not authenticated' });
-                    return;
-                }
+                const user = req.user;
                 const postId = parseInt(req.params.postId);
                 const commentId = parseInt(req.params.commentId);
                 if (isNaN(postId) || isNaN(commentId)) {
-                    res.status(400).json({ error: 'Invalid ID provided' });
-                    return;
+                    return res.status(400).json({ error: 'Invalid ID provided' });
                 }
                 const comment = yield this.commentService.getCommentById(commentId, postId);
                 if (!comment) {
-                    res.status(404).json({ error: 'Comment not found' });
-                    return;
+                    return res.status(404).json({ error: 'Comment not found' });
                 }
-                res.json({ comment });
+                return res.json({ comment });
             }
             catch (error) {
                 console.error('Error fetching comment:', error);
                 if (error instanceof Error && error.message === 'Post not found') {
-                    res.status(404).json({ error: error.message });
-                    return;
+                    return res.status(404).json({ error: error.message });
                 }
-                res.status(500).json({ error: 'Error fetching comment' });
+                return res.status(500).json({ error: 'Error fetching comment' });
             }
         });
-        this.getPostComments = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    }
+    getPostComments(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({ error: 'User not authenticated' });
-                    return;
-                }
+                const user = req.user;
                 const postId = parseInt(req.params.postId);
                 if (isNaN(postId)) {
-                    res.status(400).json({ error: 'Invalid post ID' });
-                    return;
+                    return res.status(400).json({ error: 'Invalid post ID' });
                 }
                 const comments = yield this.commentService.getCommentsByPostId(postId);
-                res.json({ comments });
+                return res.json({ comments });
             }
             catch (error) {
                 console.error('Error fetching comments:', error);
                 if (error instanceof Error && error.message === 'Post not found') {
-                    res.status(404).json({ error: error.message });
-                    return;
+                    return res.status(404).json({ error: error.message });
                 }
-                res.status(500).json({ error: 'Error fetching comments' });
+                return res.status(500).json({ error: 'Error fetching comments' });
             }
         });
-        this.updateComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    }
+    updateComment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({ error: 'User not authenticated' });
-                    return;
-                }
                 const user = req.user;
                 const postId = parseInt(req.params.postId);
                 const commentId = parseInt(req.params.commentId);
                 const { content } = req.body;
                 if (!content || isNaN(postId) || isNaN(commentId)) {
-                    res.status(400).json({ error: 'Invalid request data' });
-                    return;
+                    return res.status(400).json({ error: 'Invalid request data' });
                 }
                 const comment = yield this.commentService.updateComment(commentId, postId, content, user.id, user.role);
-                res.json({ comment });
+                return res.json({ comment });
             }
             catch (error) {
                 console.error('Error updating comment:', error);
                 if (error instanceof Error) {
                     if (error.message === 'Comment not found') {
-                        res.status(404).json({ error: error.message });
-                        return;
+                        return res.status(404).json({ error: error.message });
                     }
                     if (error.message === 'Not authorized to update this comment') {
-                        res.status(403).json({ error: error.message });
-                        return;
+                        return res.status(403).json({ error: error.message });
                     }
                 }
-                res.status(500).json({ error: 'Failed to update comment' });
+                return res.status(500).json({ error: 'Failed to update comment' });
             }
         });
-        this.deleteComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    }
+    deleteComment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.user) {
-                    res.status(401).json({ error: 'User not authenticated' });
-                    return;
-                }
                 const user = req.user;
                 const postId = parseInt(req.params.postId);
                 const commentId = parseInt(req.params.commentId);
                 if (isNaN(postId) || isNaN(commentId)) {
-                    res.status(400).json({ error: 'Invalid ID provided' });
-                    return;
+                    return res.status(400).json({ error: 'Invalid ID provided' });
                 }
                 yield this.commentService.deleteComment(commentId, postId, user.id, user.role);
-                res.status(204).send();
+                return res.status(204).send();
             }
             catch (error) {
                 console.error('Error deleting comment:', error);
                 if (error instanceof Error) {
                     if (error.message === 'Comment not found') {
-                        res.status(404).json({ error: error.message });
-                        return;
+                        return res.status(404).json({ error: error.message });
                     }
                     if (error.message === 'Not authorized to delete this comment') {
-                        res.status(403).json({ error: error.message });
-                        return;
+                        return res.status(403).json({ error: error.message });
                     }
                 }
-                res.status(500).json({ error: 'Failed to delete comment' });
+                return res.status(500).json({ error: 'Failed to delete comment' });
             }
         });
-        this.commentService = new comment_services_1.CommentService(prisma);
     }
 }
-exports.CommentController = CommentController;
 exports.default = CommentController;
