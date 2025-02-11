@@ -14,7 +14,7 @@ class PostController {
 
   public async getPublishedPosts(req: Request, res: Response): Promise<Response> {
     try {
-      const posts = await this.postService.findAllPublished();
+      const posts = await this.postService.findAll();
       return res.json({ posts });
     } catch (error) {
       console.error("Error getting published posts:", error);
@@ -22,6 +22,9 @@ class PostController {
     }
   }
 
+
+  //get user only post 
+  
   
   public async getPost(req: Request, res: Response): Promise<Response> {
     try {
