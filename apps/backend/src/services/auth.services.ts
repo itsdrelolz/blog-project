@@ -15,7 +15,7 @@ export class AuthService {
       data: {
         ...userData,
         password: hashedPassword,
-        role: userData.role || 'READER',
+
       },
     });
 
@@ -57,7 +57,6 @@ export class AuthService {
     const payload: TokenPayload = {
       id: user.id,
       email: user.email,
-      role: user.role,
     };
 
     return jwt.sign(payload, config.jwtSecret || 'defaultSecret', {

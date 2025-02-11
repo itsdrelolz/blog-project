@@ -9,7 +9,6 @@ export class PostService {
     return this.prisma.post.create({
       data: {
         ...data,
-        published: false,
         authorId,
       },
       include: {

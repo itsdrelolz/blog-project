@@ -1,25 +1,22 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { CommentService } from '../../services/comment.services';
-import { CreateCommentDto, UpdateCommentDto } from '../../types';
-import { ParamsDictionary } from 'express-serve-static-core';
-import { TokenPayload } from '../../types';
+import { TokenPayload } from '../../types'; // Make sure this import is correct
 
-interface CommentParams extends ParamsDictionary {
+interface CommentParams { // No need for ParamsDictionary if you only have these two
   postId: string;
-  commentId: string;
+  commentId?: string; // commentId is optional for some routes
 }
 
-  class CommentController {
+class CommentController {
   private commentService: CommentService;
 
   constructor(prisma: PrismaClient) {
     this.commentService = new CommentService(prisma);
   }
 
-
-  public async addComment(req: Request, res: Response): Promise<Response> { 
-    try { 
+  public async addComment(req: Request, res: Response): Promise<Response> {
+    try {
       const user = req.user as TokenPayload;
       const { content } = req.body;
       const postId = parseInt(req.params.postId);
@@ -32,35 +29,29 @@ interface CommentParams extends ParamsDictionary {
         return res.status(400).json({ error: 'Invalid post ID' });
       }
 
-      const comment = await this.commentService.createComment(user.id, {
-        content,
-        postId,
-      });
+      const comment = await this.commentService.createComment(user.id, { content, postId });
 
       return res.status(201).json({ comment });
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error creating comment:', error);
       if (error instanceof Error && error.message === 'Post not found') {
         return res.status(404).json({ error: error.message });
       }
-      return res.status(500).json({ error: 'Failed creating a comment' });
+      return res.status(500).json({ error: 'Failed to create comment' }); // Consistent message
     }
-  } 
+  }
 
-
-  public async getPostComment(req: Request, res: Response): Promise<Response> { 
+  public async getPostComment(req: Request<CommentParams>, res: Response): Promise<Response> {
     try {
-      const user = req.user as TokenPayload;
       const postId = parseInt(req.params.postId);
-      const commentId = parseInt(req.params.commentId!);
+      const commentId = parseInt(req.params.commentId!); // Non-null assertion is okay here
 
       if (isNaN(postId) || isNaN(commentId)) {
         return res.status(400).json({ error: 'Invalid ID provided' });
       }
 
       const comment = await this.commentService.getCommentById(commentId, postId);
-      
+
       if (!comment) {
         return res.status(404).json({ error: 'Comment not found' });
       }
@@ -71,14 +62,14 @@ interface CommentParams extends ParamsDictionary {
       if (error instanceof Error && error.message === 'Post not found') {
         return res.status(404).json({ error: error.message });
       }
-      return res.status(500).json({ error: 'Error fetching comment' });
+      return res.status(500).json({ error: 'Error fetching comment' }); // Consistent message
     }
   }
 
-  public async getPostComments(req: Request, res: Response): Promise<Response> {
+  public async getPostComments(req: Request<CommentParams>, res: Response): Promise<Response> {
     try {
-      const user = req.user as TokenPayload;
       const postId = parseInt(req.params.postId);
+
       if (isNaN(postId)) {
         return res.status(400).json({ error: 'Invalid post ID' });
       }
@@ -90,15 +81,12 @@ interface CommentParams extends ParamsDictionary {
       if (error instanceof Error && error.message === 'Post not found') {
         return res.status(404).json({ error: error.message });
       }
-      return res.status(500).json({ error: 'Error fetching comments' });
+      return res.status(500).json({ error: 'Error fetching comments' }); // Consistent message
     }
-
   }
 
-
-  public async updateComment(req: Request, res: Response): Promise<Response> {
-
-    try { 
+  public async updateComment(req: Request<CommentParams>, res: Response): Promise<Response> {
+    try {
       const user = req.user as TokenPayload;
       const postId = parseInt(req.params.postId);
       const commentId = parseInt(req.params.commentId!);
@@ -108,33 +96,25 @@ interface CommentParams extends ParamsDictionary {
         return res.status(400).json({ error: 'Invalid request data' });
       }
 
-      const comment = await this.commentService.updateComment(
-        commentId,
-        postId,
-        content,
-        user.id,
-        user.role
-      );
+      const comment = await this.commentService.updateComment(commentId, postId, content, user.id); // No need to pass user.role
 
       return res.json({ comment });
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error updating comment:', error);
       if (error instanceof Error) {
-        if (error.message === 'Comment not found') {
-          return res.status(404).json({ error: error.message });
-        }
-        if (error.message === 'Not authorized to update this comment') {
-          return res.status(403).json({ error: error.message });
+        switch (error.message) { // Use a switch for cleaner error handling
+          case 'Comment not found':
+          case 'Post not found':
+            return res.status(404).json({ error: error.message });
+          case 'Not authorized to update this comment':
+            return res.status(403).json({ error: error.message });
         }
       }
-      return res.status(500).json({ error: 'Failed to update comment' });
+      return res.status(500).json({ error: 'Failed to update comment' }); // Consistent message
     }
   }
 
-
-
-  public async deleteComment(req: Request, res: Response): Promise<Response> {
+  public async deleteComment(req: Request<CommentParams>, res: Response): Promise<Response> {
     try {
       const user = req.user as TokenPayload;
       const postId = parseInt(req.params.postId);
@@ -144,25 +124,21 @@ interface CommentParams extends ParamsDictionary {
         return res.status(400).json({ error: 'Invalid ID provided' });
       }
 
-      await this.commentService.deleteComment(
-        commentId,
-        postId,
-        user.id,
-        user.role
-      );
+      await this.commentService.deleteComment(commentId, postId, user.id); // No need to pass user.role
 
       return res.status(204).send();
     } catch (error) {
       console.error('Error deleting comment:', error);
       if (error instanceof Error) {
-        if (error.message === 'Comment not found') {
-          return res.status(404).json({ error: error.message });
-        }
-        if (error.message === 'Not authorized to delete this comment') {
-          return res.status(403).json({ error: error.message });
+        switch (error.message) { // Use a switch for cleaner error handling
+          case 'Comment not found':
+          case 'Post not found':
+            return res.status(404).json({ error: error.message });
+          case 'Not authorized to delete this comment':
+            return res.status(403).json({ error: error.message });
         }
       }
-      return res.status(500).json({ error: 'Failed to delete comment' });
+      return res.status(500).json({ error: 'Failed to delete comment' }); // Consistent message
     }
   }
 }
