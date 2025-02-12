@@ -15,7 +15,6 @@ export class AuthService {
       data: {
         ...userData,
         password: hashedPassword,
-
       },
     });
 

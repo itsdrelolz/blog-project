@@ -18,10 +18,17 @@ export default ({ app }: { app: express.Application }) => {
   app.use('/creator', authMiddleware, creatorRouter);
 
   // Error handling
-  app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong!' });
-  });
+  app.use(
+    (
+      err: Error,
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      console.error(err);
+      res.status(500).json({ error: 'Something went wrong!' });
+    },
+  );
 
   return app;
 };

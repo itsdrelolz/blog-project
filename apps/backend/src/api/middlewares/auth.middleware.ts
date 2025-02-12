@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { Role, User } from '@prisma/client';
 import type { Request, Response, NextFunction, RequestHandler } from 'express';
 import config from '../../config';
 
@@ -12,7 +11,6 @@ declare module 'express-serve-static-core' {
 
 export interface TokenPayload {
   id: number;
-  role: Role;
   email: string;
 }
 
@@ -26,7 +24,7 @@ export class AuthError extends Error {
 export const authMiddleware: RequestHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   try {
     const authHeader = req.headers.authorization;
@@ -43,8 +41,7 @@ export const authMiddleware: RequestHandler = (
       const decoded = jwt.verify(token, config.jwtSecret || '') as TokenPayload;
       req.user = {
         id: decoded.id,
-        role: decoded.role,
-        email: decoded.email
+        email: decoded.email,
       };
       next();
     } catch (jwtError) {
@@ -56,61 +53,5 @@ export const authMiddleware: RequestHandler = (
       return;
     }
     res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-export const requireRoles = (roles: Role[]): RequestHandler => {
-  return (req, res, next): void => {
-    try {
-      if (!req.user) {
-        throw new AuthError('Authentication required');
-      }
-
-      if (!roles.includes(req.user.role)) {
-        res.status(403).json({
-          error: `Access denied. Required roles: ${roles.join(' or ')}`,
-          currentRole: req.user.role,
-        });
-        return;
-      }
-
-      next();
-    } catch (error) {
-      if (error instanceof AuthError) {
-        res.status(401).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: 'Error checking user role' });
-    }
-  };
-};
-
-export const checkCreatorRole: RequestHandler = (
-  req,
-  res,
-  next
-): void => {
-  try {
-    if (!req.user) {
-      throw new AuthError('Authentication required');
-    }
-
-    const allowedRoles: readonly Role[] = [Role.CREATOR, Role.ADMIN] as const;
-
-    if (!allowedRoles.includes(req.user.role)) {
-      res.status(403).json({
-        error: 'Access denied. Creator or Admin role required.',
-        currentRole: req.user.role,
-      });
-      return;
-    }
-
-    next();
-  } catch (error) {
-    if (error instanceof AuthError) {
-      res.status(401).json({ error: error.message });
-      return;
-    }
-    res.status(500).json({ error: 'Error checking user role' });
   }
 };

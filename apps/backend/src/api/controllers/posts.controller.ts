@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client'; // Removed Role import
-import { User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { PostService } from '../../services/post.services';
-import { Token } from 'typescript';
 import { TokenPayload } from '../middlewares/auth.middleware';
 
 class PostController {
@@ -10,6 +8,19 @@ class PostController {
 
   constructor(prisma: PrismaClient) {
     this.postService = new PostService(prisma);
+  }
+
+  public async getAllPublishedPosts(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    try {
+      const posts = await this.postService.findAllPublished();
+      return res.json({ posts });
+    } catch (error) {
+      console.error('Error getting all published posts:', error);
+      return res.status(500).json({ error: 'Failed to get published posts' });
+    }
   }
 
   public async getPost(req: Request, res: Response): Promise<Response> {
@@ -27,9 +38,8 @@ class PostController {
       }
 
       return res.json({ post }); // No more role or published checks
-
     } catch (error) {
-      console.error("Error getting post:", error);
+      console.error('Error getting post:', error);
       return res.status(500).json({ error: 'Failed to get post' });
     }
   }
@@ -39,14 +49,15 @@ class PostController {
       const user = req.user as TokenPayload;
       const { title, content } = req.body;
 
-      if (!title ||!content) {
-        return res.status(400).json({ error: 'Title and content are required' });
+      if (!title || !content) {
+        return res
+          .status(400)
+          .json({ error: 'Title and content are required' });
       }
 
       const post = await this.postService.create(user.id, { title, content }); // No published field
 
       return res.status(201).json({ post });
-
     } catch (error) {
       console.error('Error creating post:', error);
       return res.status(500).json({ error: 'Failed to create post' });
@@ -68,13 +79,15 @@ class PostController {
         return res.status(404).json({ error: 'Post not found' });
       }
 
-      if (existingPost.authorId!== user.id ) { // Only author can update
-        return res.status(403).json({ error: 'Not authorized to update this post' });
+      if (existingPost.authorId !== user.id) {
+        // Only author can update
+        return res
+          .status(403)
+          .json({ error: 'Not authorized to update this post' });
       }
 
       const post = await this.postService.update(id, req.body);
       return res.json({ post });
-
     } catch (error) {
       console.error('Error updating post:', error);
       return res.status(500).json({ error: 'Failed to update post' });
@@ -96,13 +109,14 @@ class PostController {
         return res.status(404).json({ error: 'Post not found' });
       }
 
-      if (existingPost.authorId!== user.id) { 
-        return res.status(403).json({ error: 'Not authorized to delete this post' });
+      if (existingPost.authorId !== user.id) {
+        return res
+          .status(403)
+          .json({ error: 'Not authorized to delete this post' });
       }
 
       await this.postService.delete(id);
       return res.status(204).send();
-
     } catch (error) {
       console.error('Error deleting post:', error);
       return res.status(500).json({ error: 'Failed to delete post' });

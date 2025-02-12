@@ -13,7 +13,6 @@ export class UserService {
       data: {
         ...data,
         password: hashedPassword,
-        role: data.role || 'READER',
       },
     });
   }

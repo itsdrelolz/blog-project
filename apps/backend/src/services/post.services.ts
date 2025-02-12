@@ -22,6 +22,39 @@ export class PostService {
       },
     });
   }
+  async findAllPublished() {
+    return this.prisma.post.findMany({
+      where: {
+        published: true,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 
   async findById(id: number) {
     return this.prisma.post.findUnique({
@@ -48,37 +81,6 @@ export class PostService {
             createdAt: 'desc',
           },
         },
-      },
-    });
-  }
-
-  async findAll() {
-    return this.prisma.post.findMany({
-      where: {
-        published: true,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
-        },
-        comments: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                email: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
       },
     });
   }

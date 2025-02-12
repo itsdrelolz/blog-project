@@ -1,5 +1,4 @@
 import { User } from '@prisma/client';
-import { UserRole } from './user';
 
 export interface LoginData {
   email: string;
@@ -14,5 +13,4 @@ export interface AuthResponse {
 export interface TokenPayload {
   id: number;
   email: string;
-  role: UserRole;
 }

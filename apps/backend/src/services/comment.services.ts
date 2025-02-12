@@ -5,7 +5,9 @@ export class CommentService {
   constructor(private prisma: PrismaClient) {}
 
   async createComment(authorId: number, data: CreateCommentData) {
-    const post = await this.prisma.post.findUnique({ where: { id: data.postId } });
+    const post = await this.prisma.post.findUnique({
+      where: { id: data.postId },
+    });
     if (!post) {
       throw new Error('Post not found');
     }
@@ -41,13 +43,21 @@ export class CommentService {
     });
   }
 
-  async updateComment(commentId: number, postId: number, content: string, userId: number) {
-    const comment = await this.prisma.comment.findFirst({ where: { id: commentId, postId } });
+  async updateComment(
+    commentId: number,
+    postId: number,
+    content: string,
+    userId: number,
+  ) {
+    const comment = await this.prisma.comment.findFirst({
+      where: { id: commentId, postId },
+    });
     if (!comment) {
       throw new Error('Comment not found');
     }
 
-    if (comment.authorId!== userId) { // Authorization check here
+    if (comment.authorId !== userId) {
+      // Authorization check
       throw new Error('Not authorized to update this comment');
     }
 
@@ -59,12 +69,15 @@ export class CommentService {
   }
 
   async deleteComment(commentId: number, postId: number, userId: number) {
-    const comment = await this.prisma.comment.findFirst({ where: { id: commentId, postId } });
+    const comment = await this.prisma.comment.findFirst({
+      where: { id: commentId, postId },
+    });
     if (!comment) {
       throw new Error('Comment not found');
     }
 
-    if (comment.authorId!== userId) { // Authorization check here
+    if (comment.authorId !== userId) {
+      // Authorization check
       throw new Error('Not authorized to delete this comment');
     }
 

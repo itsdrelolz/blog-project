@@ -3,11 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { CommentService } from '../../services/comment.services';
 import { TokenPayload } from '../../types'; // Make sure this import is correct
 
-interface CommentParams { // No need for ParamsDictionary if you only have these two
-  postId: string;
-  commentId?: string; // commentId is optional for some routes
-}
-
 class CommentController {
   private commentService: CommentService;
 
@@ -29,7 +24,10 @@ class CommentController {
         return res.status(400).json({ error: 'Invalid post ID' });
       }
 
-      const comment = await this.commentService.createComment(user.id, { content, postId });
+      const comment = await this.commentService.createComment(user.id, {
+        content,
+        postId,
+      });
 
       return res.status(201).json({ comment });
     } catch (error) {
@@ -41,16 +39,19 @@ class CommentController {
     }
   }
 
-  public async getPostComment(req: Request<CommentParams>, res: Response): Promise<Response> {
+  public async getPostComment(req: Request, res: Response): Promise<Response> {
     try {
       const postId = parseInt(req.params.postId);
-      const commentId = parseInt(req.params.commentId!); // Non-null assertion is okay here
+      const commentId = parseInt(req.params.commentId!);
 
       if (isNaN(postId) || isNaN(commentId)) {
         return res.status(400).json({ error: 'Invalid ID provided' });
       }
 
-      const comment = await this.commentService.getCommentById(commentId, postId);
+      const comment = await this.commentService.getCommentById(
+        commentId,
+        postId,
+      );
 
       if (!comment) {
         return res.status(404).json({ error: 'Comment not found' });
@@ -66,7 +67,7 @@ class CommentController {
     }
   }
 
-  public async getPostComments(req: Request<CommentParams>, res: Response): Promise<Response> {
+  public async getPostComments(req: Request, res: Response): Promise<Response> {
     try {
       const postId = parseInt(req.params.postId);
 
@@ -85,7 +86,7 @@ class CommentController {
     }
   }
 
-  public async updateComment(req: Request<CommentParams>, res: Response): Promise<Response> {
+  public async updateComment(req: Request, res: Response): Promise<Response> {
     try {
       const user = req.user as TokenPayload;
       const postId = parseInt(req.params.postId);
@@ -96,13 +97,20 @@ class CommentController {
         return res.status(400).json({ error: 'Invalid request data' });
       }
 
-      const comment = await this.commentService.updateComment(commentId, postId, content, user.id); // No need to pass user.role
+      const comment = await this.commentService.updateComment(
+        commentId,
+        postId,
+        content,
+        user.id,
+      ); // No need to pass user.role
 
       return res.json({ comment });
     } catch (error) {
       console.error('Error updating comment:', error);
       if (error instanceof Error) {
-        switch (error.message) { // Use a switch for cleaner error handling
+        switch (
+          error.message // Use a switch for cleaner error handling
+        ) {
           case 'Comment not found':
           case 'Post not found':
             return res.status(404).json({ error: error.message });
@@ -114,7 +122,7 @@ class CommentController {
     }
   }
 
-  public async deleteComment(req: Request<CommentParams>, res: Response): Promise<Response> {
+  public async deleteComment(req: Request, res: Response): Promise<Response> {
     try {
       const user = req.user as TokenPayload;
       const postId = parseInt(req.params.postId);
@@ -124,13 +132,15 @@ class CommentController {
         return res.status(400).json({ error: 'Invalid ID provided' });
       }
 
-      await this.commentService.deleteComment(commentId, postId, user.id); // No need to pass user.role
+      await this.commentService.deleteComment(commentId, postId, user.id);
 
       return res.status(204).send();
     } catch (error) {
       console.error('Error deleting comment:', error);
       if (error instanceof Error) {
-        switch (error.message) { // Use a switch for cleaner error handling
+        switch (
+          error.message // Use a switch for cleaner error handling
+        ) {
           case 'Comment not found':
           case 'Post not found':
             return res.status(404).json({ error: error.message });
