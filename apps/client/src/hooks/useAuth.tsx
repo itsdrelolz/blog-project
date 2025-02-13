@@ -1,7 +1,3 @@
-
-const useAuth = () => {
-
-}
-
+const useAuth = () => {};
 
 export default useAuth;
