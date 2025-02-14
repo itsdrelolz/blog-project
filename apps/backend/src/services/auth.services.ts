@@ -2,7 +2,7 @@
 import { PrismaClient, User } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { CreateUserData, AuthResponse, TokenPayload } from '../types';
+import { CreateUserData, AuthResponse, TokenPayload, GetUserData} from '../types';
 import config from '../config';
 
 export class AuthService {
@@ -61,5 +61,30 @@ export class AuthService {
     return jwt.sign(payload, config.jwtSecret || 'defaultSecret', {
       expiresIn: '24h',
     });
+  }
+
+  async getMe(userId: number): Promise<GetUserData | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        posts: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user as GetUserData;
   }
 }
