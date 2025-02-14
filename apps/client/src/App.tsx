@@ -8,13 +8,14 @@ import Register from './pages/RegisterPage';
 import AboutPage from './pages/AboutPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProfilePage from './pages/ProfilePage';
+
 const App = () => {
   return (
     <div className="flex flex-col min-h-screen"> 
       <Header />
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/public/home" element={<HomePage />} />
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/auth/signup" element={<Register />} />
           

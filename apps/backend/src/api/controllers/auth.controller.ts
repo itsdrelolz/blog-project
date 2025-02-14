@@ -19,7 +19,7 @@ export class AuthController {
     try {
       const { email, password, name } = req.body;
 
-      // Validation
+      
       if (!email || !password || !name) {
         res.status(400).json({
           error: 'Missing required fields',

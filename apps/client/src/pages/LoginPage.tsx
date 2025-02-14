@@ -37,7 +37,7 @@ const LoginPage = () => {
 
             localStorage.setItem("token", data.token);
 
-            navigate("/");
+            setTimeout(() => navigate("/public/home"), 1500); // Redirect to home page after successful login
         } catch (error) {
             console.error("Error during login:", error);
             setError((error as Error).message);
