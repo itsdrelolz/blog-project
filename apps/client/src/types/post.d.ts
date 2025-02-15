@@ -20,4 +20,13 @@ interface PostResponse {
   posts: Post[];
 }
 
-export { Post, PostResponse };
+interface AuthContextType {
+  isLoggedIn: boolean;
+  user: any; 
+  token: string | null;
+  login: (token: string) => void;
+  logout: () => void;
+  isLoading: boolean;
+}
+
+export { Post, PostResponse, AuthContextType };

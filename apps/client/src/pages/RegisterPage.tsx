@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -9,7 +10,14 @@ const Register = () => {
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false); 
   const navigate = useNavigate();
-
+  const { isLoggedIn } = useAuth();
+  
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/public/home");
+    }
+  }, [isLoggedIn, navigate]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
