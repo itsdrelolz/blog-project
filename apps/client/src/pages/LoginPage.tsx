@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
 const LoginPage = () => {
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);

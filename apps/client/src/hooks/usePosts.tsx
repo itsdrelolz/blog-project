@@ -10,7 +10,7 @@ export const usePosts = () => {
   useEffect(() => {
     const getPosts = async () => {
       try {
-        const data: PostResponse = await fetchPosts();
+        const data: PostResponse = await fetchPosts('/public/home');
         console.log("API Response:", data);
 
         setPosts(data.posts);

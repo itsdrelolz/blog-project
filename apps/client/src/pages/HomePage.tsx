@@ -1,7 +1,9 @@
 import { usePosts } from "../hooks/usePosts";
 import Post from "../components/Post";
 
+
 const HomePage = () => {
+  
   const { posts, loading, error } = usePosts();
 
   if (loading) return <div>Loading...</div>;
