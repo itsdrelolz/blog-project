@@ -35,7 +35,6 @@ const Header = () => {
                 View Profile
               </Link>
             </>
-            
           ) : 
           <> 
           <Link to="/public/home" className="hover:underline mr-4">
