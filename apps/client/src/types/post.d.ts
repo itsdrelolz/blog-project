@@ -20,6 +20,12 @@ interface PostResponse {
   posts: Post[];
 }
 
+
+interface PostData  {
+  title: string;
+  content: string; 
+}
+
 interface AuthContextType {
   isLoggedIn: boolean;
   user: any; 
@@ -29,4 +35,4 @@ interface AuthContextType {
   isLoading: boolean;
 }
 
-export { Post, PostResponse, AuthContextType };
+export { Post, PostResponse, AuthContextType, PostData };

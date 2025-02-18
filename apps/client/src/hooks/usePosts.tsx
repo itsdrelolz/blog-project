@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchPosts } from "./postsApi";
+import { fetchPosts } from "./api";
 import { Post as PostInterface, PostResponse } from "../types/post";
 
 export const usePosts = () => {
@@ -10,7 +10,7 @@ export const usePosts = () => {
   useEffect(() => {
     const getPosts = async () => {
       try {
-        const data: PostResponse = await fetchPosts('/public/home');
+        const data: PostResponse = await fetchPosts();
         console.log("API Response:", data);
 
         setPosts(data.posts);

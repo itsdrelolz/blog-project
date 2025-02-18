@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-
+import { fetchPost } from "../utils/api"
 const Register = () => {
   
   const [name, setName] = useState("");
