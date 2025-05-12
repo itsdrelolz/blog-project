@@ -14,17 +14,18 @@ const Header = () => {
 
   return (
     <header>
-      <nav className="bg-white shadow p-2 flex items-center">
+      <nav className="bg-gray-100 shadow p-2 flex items-center">
         <div className="flex-1">
           <Link to="/">
             <img src={logo} alt="Logo" className="w-16 md:w-20 h-auto" />
           </Link>
         </div>
 
+
         <div className="flex-1 text-center">
           {isLoggedIn ? (
             <>
-              <Link to="/create-blog" className="hover:underline mr-4">
+              <Link to="/create-post" className="hover:underline mr-4">
                 New Post
               </Link>
               <Link to="/about" className="hover:underline mr-4">
@@ -37,7 +38,7 @@ const Header = () => {
           ) : (
             <>
               <Link to="/about" className="hover:underline mr-4">
-                About
+                About me
               </Link>
             </>
           )}

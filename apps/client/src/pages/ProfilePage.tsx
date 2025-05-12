@@ -9,7 +9,7 @@ const { user } = useAuth();
     return ( 
         <>
         <h1>Profile</h1>
-        <p>{user?.username}</p>
+        <p>{user?.name}</p>
         </>
     )
 }
