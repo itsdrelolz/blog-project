@@ -26,32 +26,44 @@ export const authMiddleware: RequestHandler = (
   res: Response,
   next: NextFunction,
 ): void => {
+  console.log("AuthMiddleware START"); // Log: Middleware started
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      throw new AuthError('No authorization token provided');
-    }
+      const authHeader = req.headers.authorization;
+      console.log("Authorization Header:", authHeader); // Log: Auth header value
 
-    const [type, token] = authHeader.split(' ');
-    if (!token || type !== 'Bearer') {
-      throw new AuthError('Invalid token format');
-    }
+      if (!authHeader) {
+          console.log("No auth header - Unauthorized"); // Log: No header case
+          throw new AuthError('No authorization token provided');
+      }
 
-    try {
-      const decoded = jwt.verify(token, config.jwtSecret || '') as TokenPayload;
-      req.user = {
-        id: decoded.id,
-        email: decoded.email,
-      };
-      next();
-    } catch (jwtError) {
-      throw new AuthError('Invalid or expired token');
-    }
+      const [type, token] = authHeader.split(' ');
+      console.log("Token Type:", type, "Token Value:", token); // Log: Token parts
+      if (!token || type !== 'Bearer') {
+          console.log("Invalid token format - Unauthorized"); // Log: Invalid format
+          throw new AuthError('Invalid token format');
+      }
+
+      try {
+          const decoded = jwt.verify(token, config.jwtSecret || '') as TokenPayload;
+          console.log("Token Decoded:", decoded); // Log: Decoded payload
+          req.user = {
+              id: decoded.id,
+              email: decoded.email,
+          };
+          console.log("AuthMiddleware SUCCESS - User attached to req.user"); // Log: Success
+          next(); // Proceed to next handler
+      } catch (jwtError) {
+          console.log("JWT Verification Error:", jwtError); // Log: JWT error
+          throw new AuthError('Invalid or expired token');
+      }
   } catch (error) {
-    if (error instanceof AuthError) {
-      res.status(401).json({ error: error.message });
-      return;
-    }
-    res.status(500).json({ error: 'Internal server error' });
+      if (error instanceof AuthError) {
+          console.log("AuthError caught:", error.message); // Log: AuthError messages
+          res.status(401).json({ error: error.message });
+          return;
+      }
+      console.error("Generic Middleware Error:", error); // Log: Generic error
+      res.status(500).json({ error: 'Internal server error' });
   }
+  console.log("AuthMiddleware END"); // Log: Middleware finished
 };

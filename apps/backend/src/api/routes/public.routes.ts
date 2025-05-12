@@ -10,7 +10,7 @@ const router = Router();
 const commentsController = new CommentController(prisma);
 
 // GET routes
-router.get('/home', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/posts', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await postController.getAllPublishedPosts(req, res);
   } catch (error) {
