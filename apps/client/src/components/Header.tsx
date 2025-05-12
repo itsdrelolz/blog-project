@@ -16,7 +16,7 @@ const Header = () => {
       
         
           <div className="flex-1 text-center">
-            <Link to="/create-blog" className="hover:underline mr-4">
+            <Link to="/create-post" className="hover:underline mr-4">
               New Post
             </Link>
             <Link to="/profile" className="hover:underline">
