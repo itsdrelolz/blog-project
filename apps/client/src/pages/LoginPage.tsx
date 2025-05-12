@@ -13,7 +13,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-        navigate('/public/home');
+        navigate('/');
     }
 }, [isLoggedIn, navigate]);
 
@@ -47,7 +47,7 @@ const LoginPage = () => {
 
       if (token) {
         login(token);
-        navigate("/public/home");
+        navigate("/");
       } else {
         setError("Login failed: No token received");
       }

@@ -12,7 +12,7 @@ const AuthContext = createContext<AuthContextType>({
     isLoading: true, 
 });
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token'));
