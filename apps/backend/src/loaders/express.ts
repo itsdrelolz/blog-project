@@ -5,6 +5,7 @@ import { authMiddleware } from '../api/middlewares/auth.middleware';
 import authRouter from '../api/routes/auth.routes';
 import creatorRouter from '../api/routes/creator.routes';
 import publicRouter from '../api/routes/public.routes';
+import roleRouter from '../api/routes/role.routes';
 
 export default ({ app }: { app: express.Application }) => {
   // Global middleware
@@ -16,6 +17,7 @@ export default ({ app }: { app: express.Application }) => {
   app.use('/auth', authRouter);
   app.use('/public', publicRouter);
   app.use('/creator', authMiddleware, creatorRouter);
+  app.use('/roles', authMiddleware, roleRouter);
 
   // Error handling
   app.use(

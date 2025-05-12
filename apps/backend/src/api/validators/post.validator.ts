@@ -16,6 +16,12 @@ export const postValidators = {
       .isLength({ min: 10 })
       .withMessage('Content must be at least 10 characters')
       .escape(),
+    body('thumbnail')
+      .optional()
+      .trim()
+      .isURL()
+      .withMessage('Thumbnail must be a valid URL')
+      .escape(),
   ],
 
   updatePost: [
@@ -31,6 +37,13 @@ export const postValidators = {
       .trim()
       .isLength({ min: 10 })
       .withMessage('Content must be at least 10 characters')
+      .escape(),
+
+    body('thumbnail')
+      .optional()
+      .trim()
+      .isURL()
+      .withMessage('Thumbnail must be a valid URL')
       .escape(),
   ],
 };

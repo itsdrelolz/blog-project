@@ -11,11 +11,24 @@ export class AuthService {
   async createUser(userData: CreateUserData): Promise<AuthResponse> {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
+    // Get default role (e.g., 'user') if roleId is not provided
+    const defaultRole = await this.prisma.role.findFirst({
+      where: { name: 'user' }
+    });
+
+    if (!defaultRole) {
+      throw new Error('Default role not found');
+    }
+
     const user = await this.prisma.user.create({
       data: {
         ...userData,
         password: hashedPassword,
+        roleId: userData.roleId || defaultRole.id,
       },
+      include: {
+        role: true
+      }
     });
 
     const token = this.generateToken(user);
@@ -66,14 +79,21 @@ export class AuthService {
   async getMe(userId: number): Promise<GetUserData | null> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
+      include: {
+        role: true,
         posts: {
           select: {
             id: true,
             title: true,
+            content: true,
+            thumbnail: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        comments: {
+          select: {
+            id: true,
             content: true,
             createdAt: true,
             updatedAt: true,
