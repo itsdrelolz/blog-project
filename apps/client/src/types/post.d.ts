@@ -14,6 +14,7 @@ interface Post {
   published: boolean;
   author: Author;
   comments: any;
+  thumbnail: string;
 }
 
 interface PostResponse {
