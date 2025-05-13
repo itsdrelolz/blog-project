@@ -11,8 +11,6 @@ export const usePosts = () => {
     const getPosts = async () => {
       try {
         const data: PostResponse = await fetchPosts();
-        console.log("API Response:", data);
-
         setPosts(data.posts);
       } catch (error) {
         setError(error as Error);
