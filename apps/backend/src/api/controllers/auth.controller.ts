@@ -1,8 +1,9 @@
 import { RequestHandler } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { AuthService } from '../../services/auth.services';
-import { CreateUserData, LoginData, AuthResponse, TokenPayload } from '../../types';
+import { LoginData, AuthResponse, TokenPayload } from '@blog-project/shared-types/types/auth';
 import { ParamsDictionary } from 'express-serve-static-core';
+import { CreateUserData } from '@blog-project/shared-types/types/user';
 export class AuthController {
     private authService: AuthService;
 

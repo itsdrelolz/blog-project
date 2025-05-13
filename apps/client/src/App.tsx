@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage'
 import CreatePostPage from './pages/CreatePostPage'
 import ProfilePage from './pages/ProfilePage'
 import PostPage from './pages/PostPage'
+import NotFoundPage from './pages/NotFoundPage'
 import { Route, Routes, useParams } from 'react-router-dom'
 
 const PostPageWrapper = () => {
@@ -27,6 +28,7 @@ const App = () => {
           <Route path="/create-post" element={<CreatePostPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/post/:id" element={<PostPageWrapper />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
       <Footer />

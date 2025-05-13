@@ -1,7 +1,15 @@
 // hooks/AuthContext.tsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { AuthContextType } from '../types/post';
 
+
+interface AuthContextType {
+    isLoggedIn: boolean;
+    user: User | null;
+    token: string | null;
+    login: (token: string) => void;
+    logout: () => void;
+    isLoading: boolean;
+}
 
 const AuthContext = createContext<AuthContextType>({
     isLoggedIn: false,

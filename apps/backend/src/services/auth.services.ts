@@ -2,7 +2,8 @@
 import { PrismaClient, User } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { CreateUserData, AuthResponse, TokenPayload, GetUserData} from '../types';
+import {AuthResponse, TokenPayload} from '@blog-project/shared-types/types/auth';
+import { CreateUserData, GetUserData } from '@blog-project/shared-types/types/user';
 import config from '../config';
 
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
     const { password: _, ...userWithoutPassword } = user;
 
     return {
-      user: userWithoutPassword,
+      user: userWithoutPassword as any,
       token,
     };
   }
@@ -43,6 +44,9 @@ export class AuthService {
   async login(email: string, password: string): Promise<AuthResponse | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
+      include: {
+        role: true
+      }
     });
 
     if (!user) return null;
@@ -54,7 +58,7 @@ export class AuthService {
     const { password: _, ...userWithoutPassword } = user;
 
     return {
-      user: userWithoutPassword,
+      user: userWithoutPassword as any,
       token,
     };
   }

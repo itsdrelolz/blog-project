@@ -1,7 +1,6 @@
-import { PostResponse } from "../types/post";
+import { Post } from "@blog-project/shared-types";
 
-
-export const fetchPost = async (id: number): Promise<PostResponse> => {
+export const fetchPost = async (id: number): Promise<{ post: Post }> => {
   const response = await fetch(`http://localhost:3000/public/posts/${id}`);
 
   if (!response.ok) {
@@ -13,4 +12,3 @@ export const fetchPost = async (id: number): Promise<PostResponse> => {
 
   return response.json();
 };
-

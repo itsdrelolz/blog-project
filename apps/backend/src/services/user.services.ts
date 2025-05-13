@@ -1,7 +1,8 @@
 // src/services/user.service.ts
 import { PrismaClient, User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { CreateUserData, LoginData } from '../types';
+import { CreateUserData } from '@blog-project/shared-types/types/user';
+import { LoginData } from '@blog-project/shared-types/types/auth';
 
 export class UserService {
   constructor(private prisma: PrismaClient) {}

@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { fetchPosts } from "./postsApi";
-import { Post as PostInterface, PostsResponse } from "../types/post";
+import { Post } from "@blog-project/shared-types";
 
 export const usePosts = () => {
-  const [posts, setPosts] = useState<PostInterface[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const getPosts = async () => {
       try {
-        const data: PostsResponse = await fetchPosts();
-        setPosts(data.posts);
+        const data: Post[] = await fetchPosts();
+        setPosts(data);
       } catch (error) {
         setError(error as Error);
         console.error("Error fetching posts:", error);

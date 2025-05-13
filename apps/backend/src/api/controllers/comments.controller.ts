@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { CommentService } from '../../services/comment.services';
-import { TokenPayload } from '../../types'; // Make sure this import is correct
+import { TokenPayload } from '@blog-project/shared-types/types/auth'; 
 
 class CommentController {
   private commentService: CommentService;

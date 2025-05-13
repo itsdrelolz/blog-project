@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchPost } from "./postApi";
-import { Post, PostResponse } from "../types/post";
+import { Post } from "@blog-project/shared-types";
 
 export const usePost = (id: string) => {
   const [post, setPost] = useState<Post | null>(null);
@@ -10,7 +10,7 @@ export const usePost = (id: string) => {
   useEffect(() => {
     const getPost = async (id: number) => {
       try {
-        const data: PostResponse = await fetchPost(id);
+        const data = await fetchPost(id);
         setPost(data.post);
       } catch (error) {
         setError(error as Error);

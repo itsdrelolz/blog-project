@@ -1,5 +1,5 @@
 import { PrismaClient, Role } from '@prisma/client';
-import { CreateRoleData, UpdateRoleData } from '../types/role';
+import { CreateRoleData, UpdateRoleData } from '@blog-project/shared-types/types/role';
 
 export class RoleService {
   constructor(private prisma: PrismaClient) {}

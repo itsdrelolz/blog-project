@@ -1,6 +1,7 @@
 // src/services/post.service.ts
 import { PrismaClient, Post } from '@prisma/client';
-import { CreatePostData, UpdatePostData } from '../types';
+import { CreatePostData, UpdatePostData } from '@blog-project/shared-types/types/post';
+
 
 export class PostService {
   constructor(private prisma: PrismaClient) {}

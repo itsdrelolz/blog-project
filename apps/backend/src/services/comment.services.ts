@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { CreateCommentData } from '../types';
+import { CreateCommentData } from '@blog-project/shared-types/types/comment';
+
+
 
 export class CommentService {
   constructor(private prisma: PrismaClient) {}

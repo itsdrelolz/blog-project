@@ -176,7 +176,7 @@ const CreatePostPage = () => {
                 'alignleft aligncenter alignright alignjustify | ' +
                 'bullist numlist outdent indent | removeformat | help',
               images_upload_handler: handleEditorImageUpload,
-              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }}
           />
         </div>

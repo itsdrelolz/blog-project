@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Post } from "../types/post";
+import type { Post } from "@blog-project/shared-types";
 
 const Post: React.FC<Post> = ({ id, title, content, author, createdAt, thumbnail }) => {
   const navigate = useNavigate();
@@ -48,9 +48,9 @@ const Post: React.FC<Post> = ({ id, title, content, author, createdAt, thumbnail
         <div className="mb-4">
           <h2 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{title}</h2>
           <div className="flex items-center text-sm text-gray-500">
-            <span className="font-medium">{author.name}</span>
+            <span className="font-medium">{author?.name}</span>
             <span className="mx-2">•</span>
-            <time dateTime={createdAt}>{formattedDate}</time>
+            <time dateTime={createdAt instanceof Date ? createdAt.toISOString() : String(createdAt)}>{formattedDate}</time>
           </div>
         </div>
         <div 

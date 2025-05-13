@@ -93,10 +93,10 @@ const Register = () => {
           {error && <div className="text-red-500 mt-2">{error}</div>}
           {success && <div className="text-green-500 mt-2">Signup successful! Redirecting...</div>}
           <p className="mt-4 text-center">
-                                  Have an account?{" "}
-                                  <Link to="/auth/login" className="text-green-500 hover:underline">
-                                      Login
-                                  </Link>
+            Have an account?{" "}
+            <Link to="/auth/login" className="text-green-500 hover:underline">
+              Login
+            </Link>
           </p>
         </div>
       </form>
