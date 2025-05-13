@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchPosts } from "./postsApi";
-import { Post as PostInterface, PostResponse } from "../types/post";
+import { Post as PostInterface, PostsResponse } from "../types/post";
 
 export const usePosts = () => {
   const [posts, setPosts] = useState<PostInterface[]>([]);
@@ -10,7 +10,7 @@ export const usePosts = () => {
   useEffect(() => {
     const getPosts = async () => {
       try {
-        const data: PostResponse = await fetchPosts();
+        const data: PostsResponse = await fetchPosts();
         setPosts(data.posts);
       } catch (error) {
         setError(error as Error);

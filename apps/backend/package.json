@@ -9,19 +9,26 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint:fix": "eslint . --fix",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "init-storage": "ts-node src/scripts/init-storage.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.3.1",
+    "@supabase/supabase-js": "^2.49.4",
+    "@types/multer": "^1.4.12",
+    "@types/node-fetch": "^2.6.12",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.5.0",
     "express": "^4.21.1",
     "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.2",
+    "node-fetch": "^2.7.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
+    "sanitize-html": "^2.16.0",
     "winston": "^3.16.0"
   },
   "devDependencies": {
@@ -33,6 +40,9 @@
     "@types/node": "^22.8.6",
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.4",
+    "@types/sanitize-html": "^2.16.0",
     "@typescript-eslint/eslint-plugin": "^8.12.2",
     "@typescript-eslint/parser": "^8.12.2",
     "eslint": "^9.14.0",

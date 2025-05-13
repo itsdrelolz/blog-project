@@ -3,6 +3,8 @@ import { postValidators } from '../validators/post.validator';
 import prisma from '../../lib/prisma';
 import PostController from '../controllers/posts.controller';
 import { Request, Response, NextFunction } from 'express';
+import { uploadMiddleware } from '../middlewares/upload.middleware';
+
 const router = Router();
 
 /*
@@ -57,6 +59,20 @@ router.delete(
       next(error);
     }
   },
+);
+
+router.post(
+  '/upload-image',
+  uploadMiddleware('image'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await postController.uploadImage(req, res);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      res.status(500).json({ error: 'Failed to upload image' });
+      next(error);
+    }
+  }
 );
 
 export default router;

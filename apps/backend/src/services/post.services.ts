@@ -5,7 +5,7 @@ import { CreatePostData, UpdatePostData } from '../types';
 export class PostService {
   constructor(private prisma: PrismaClient) {}
 
-  async create(authorId: number, data: CreatePostData): Promise<Post> {
+  async create(data: CreatePostData, authorId: number): Promise<Post> {
     return this.prisma.post.create({
       data: {
         ...data,
@@ -22,6 +22,44 @@ export class PostService {
       },
     });
   }
+
+  async findById(id: number): Promise<Post | null> {
+    return this.prisma.post.findUnique({
+      where: { id },
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  async update(id: number, data: UpdatePostData): Promise<Post> {
+    return this.prisma.post.update({
+      where: { id },
+      data,
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.prisma.post.delete({
+      where: { id },
+    });
+  }
+
   async findAllPublished() {
     return this.prisma.post.findMany({
       where: {
@@ -53,68 +91,6 @@ export class PostService {
       orderBy: {
         createdAt: 'desc',
       },
-    });
-  }
-
-  async findById(id: number) {
-    return this.prisma.post.findUnique({
-      where: { id },
-      include: {
-        author: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
-        },
-        comments: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                email: true,
-                name: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-        },
-      },
-    });
-  }
-
-  async update(id: number, data: UpdatePostData) {
-    return this.prisma.post.update({
-      where: { id },
-      data,
-      include: {
-        author: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
-        },
-        comments: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                email: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
-  async delete(id: number) {
-    return this.prisma.post.delete({
-      where: { id },
     });
   }
 

@@ -4,21 +4,31 @@ interface Author {
   name: string;
 }
 
+interface Comment {
+  id: number;
+  content: string;
+  authorId: number;
+  postId: number;
+}
 interface Post {
   id: number;
   createdAt: string;
-  updatedAt: string;
+  updatedAt: string?;
   title: string;
   content: string;
   authorId: number;
   published: boolean;
   author: Author;
-  comments: any;
-  thumbnail: string;
+  comments: any?;
+  thumbnail: string?;
+}
+
+interface PostsResponse {
+  posts: Post[];
 }
 
 interface PostResponse {
-  posts: Post[];
+  post: Post;
 }
 
 interface AuthContextType {
@@ -30,4 +40,4 @@ interface AuthContextType {
   isLoading: boolean;
 }
 
-export { Post, PostResponse, AuthContextType };
+export { Post, PostResponse, PostsResponse, AuthContextType };

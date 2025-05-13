@@ -1,9 +1,15 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Post } from "../types/post";
 
-const Post: React.FC<Post> = ({ title, content, author, createdAt, thumbnail }) => {
+const Post: React.FC<Post> = ({ id, title, content, author, createdAt, thumbnail }) => {
+  const navigate = useNavigate();
   const formattedDate = new Date(createdAt).toLocaleDateString();
   const [imageError, setImageError] = useState(false);
+
+  const handlePostClick = () => {
+    navigate(`/post/${id}`);
+  };
 
   const getImageUrl = (url: string | null): string | undefined => {
     if (!url) return undefined;
@@ -18,13 +24,15 @@ const Post: React.FC<Post> = ({ title, content, author, createdAt, thumbnail }) 
     setImageError(true);
   };
 
-
   const renderContent = (htmlContent: string) => {
     return { __html: htmlContent };
   };
 
   return (
-    <article className="flex flex-col bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
+    <article 
+      onClick={handlePostClick}
+      className="flex flex-col bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden cursor-pointer"
+    >
       {thumbnail && !imageError && (
         <div className="relative w-full h-48">
           <img 

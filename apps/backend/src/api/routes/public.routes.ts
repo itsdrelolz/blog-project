@@ -20,6 +20,19 @@ router.get('/posts', async (req: Request, res: Response, next: NextFunction) => 
 });
 
 router.get(
+  '/posts/:postId',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await postController.getPostById(req, res);
+    } catch (error) {
+      console.error('Error fetching post:', error);
+      res.status(500).json({ error: 'Failed to fetch post' });
+      next(error);
+    }
+  },
+);
+
+router.get(
   '/posts/:postId/comments',
   async (req: Request, res: Response, next: NextFunction) => {
     try {

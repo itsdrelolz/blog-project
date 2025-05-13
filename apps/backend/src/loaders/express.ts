@@ -7,6 +7,7 @@ import creatorRouter from '../api/routes/creator.routes';
 import publicRouter from '../api/routes/public.routes';
 import roleRouter from '../api/routes/role.routes';
 
+
 export default ({ app }: { app: express.Application }) => {
   // Global middleware
   app.use(cors());
@@ -18,6 +19,7 @@ export default ({ app }: { app: express.Application }) => {
   app.use('/public', publicRouter);
   app.use('/creator', authMiddleware, creatorRouter);
   app.use('/roles', authMiddleware, roleRouter);
+ 
 
   // Error handling
   app.use(

@@ -6,7 +6,13 @@ import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
 import CreatePostPage from './pages/CreatePostPage'
 import ProfilePage from './pages/ProfilePage'
-import { Route, Routes } from 'react-router-dom'
+import PostPage from './pages/PostPage'
+import { Route, Routes, useParams } from 'react-router-dom'
+
+const PostPageWrapper = () => {
+  const { id } = useParams();
+  return <PostPage id={id!} />;
+};
 
 const App = () => {
   return (
@@ -20,6 +26,7 @@ const App = () => {
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/create-post" element={<CreatePostPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/post/:id" element={<PostPageWrapper />} />
         </Routes>
       </main>
       <Footer />
