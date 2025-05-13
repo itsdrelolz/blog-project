@@ -18,7 +18,7 @@ const Post: React.FC<Post> = ({ title, content, author, createdAt, thumbnail }) 
     setImageError(true);
   };
 
-  // Function to safely render HTML content
+
   const renderContent = (htmlContent: string) => {
     return { __html: htmlContent };
   };
