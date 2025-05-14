@@ -1,10 +1,10 @@
 // hooks/AuthContext.tsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-
+import { GetUserData } from '@blog-project/shared-types/types/user';
 
 interface AuthContextType {
     isLoggedIn: boolean;
-    user: User | null;
+    user: GetUserData | null;
     token: string | null;
     login: (token: string) => void;
     logout: () => void;

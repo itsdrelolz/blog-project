@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { User } from "@blog-project/shared-types";
+import { GetUserData } from "@blog-project/shared-types/types/user";
 import useAuth from "./useAuth";
 
 export const useProfile = () => {
     const { user, isLoading } = useAuth();
-    const [profile, setProfile] = useState<User | null>(null);
+    const [profile, setProfile] = useState<GetUserData | null>(null);
 
     useEffect(() => {
         if (user) {

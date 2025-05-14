@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchPost } from "./postApi";
-import { Post } from "@blog-project/shared-types";
+import { Post } from "@blog-project/shared-types/types/post"; 
 
 export const usePost = (id: string) => {
   const [post, setPost] = useState<Post | null>(null);

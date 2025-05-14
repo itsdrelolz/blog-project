@@ -1,4 +1,4 @@
-import { Post } from "@blog-project/shared-types";
+import { Post } from "@blog-project/shared-types/types/post";
 
 
 export const fetchPosts = async (): Promise<Post[]> => {
