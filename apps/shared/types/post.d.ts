@@ -12,15 +12,15 @@ export interface Comment {
 }
 export interface Post {
   id: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   title: string;
   content: string;
   authorId: number;
   published: boolean;
   author: Author;
   comments: any;
-  thumbnail: string;
+  thumbnail: string | null;
 }
 
 export interface PostsResponse {

@@ -2,7 +2,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { GetUserData } from '@blog-project/shared-types/types/user';
 
-interface AuthContextType {
+export interface AuthContextType {
     isLoggedIn: boolean;
     user: GetUserData | null;
     token: string | null;

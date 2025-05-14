@@ -12,6 +12,7 @@ export const usePosts = () => {
     const getPosts = async () => {
       try {
         const data: Post[] = await fetchPosts();
+        console.log('Fetched posts:', data);
         setPosts(data);
       } catch (error) {
         setError(error as Error);
