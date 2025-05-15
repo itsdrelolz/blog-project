@@ -93,6 +93,7 @@ export class AuthService {
             thumbnail: true,
             createdAt: true,
             updatedAt: true,
+            published: true,
           },
         },
         comments: {
@@ -109,6 +110,6 @@ export class AuthService {
     if (!user) {
       throw new Error('User not found');
     }
-    return user as GetUserData;
+    return user as unknown as GetUserData;
   }
 }

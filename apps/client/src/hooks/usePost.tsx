@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchPost } from "./postApi";
+import { fetchPost } from "./postsApi";
 import { Post } from "@blog-project/shared-types/types/post"; 
 
 export const usePost = (id: string) => {

@@ -9,6 +9,7 @@ import ProfilePage from './pages/ProfilePage'
 import PostPage from './pages/PostPage'
 import NotFoundPage from './pages/NotFoundPage'
 import { Route, Routes, useParams } from 'react-router-dom'
+import EditPage from './pages/EditPage'
 
 const PostPageWrapper = () => {
   const { id } = useParams();
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/create-post" element={<CreatePostPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/post/:id" element={<PostPageWrapper />} />
+          <Route path="/edit/:id" element={<EditPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

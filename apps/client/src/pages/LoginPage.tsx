@@ -36,7 +36,11 @@ const LoginPage = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setError(errorData.message || 'Invalid email or password');
+        if (response.status === 429) {
+          setError('Too many login attempts. Please try again later.');
+        } else {
+          setError(errorData.message || 'Invalid email or password');
+        }
         return;
       }
 

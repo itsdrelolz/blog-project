@@ -27,6 +27,7 @@ export interface CreateUserData {
       thumbnail?: string;
       createdAt: Date;
       updatedAt: Date;
+      published: boolean;
     }[]; 
     comments?: { 
       id: number;

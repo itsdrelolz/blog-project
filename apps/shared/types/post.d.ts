@@ -1,3 +1,5 @@
+import { GetUserData } from "./user";
+
 export interface Author {
   id: number;
   email: string;
@@ -38,32 +40,7 @@ export interface Profile {
   posts: Post[];
 }
 
-export interface GetUserData {
-  id: number;
-  email: string;
-  name: string;
-  role: {
-    id: number;
-    name: string;
-    description?: string;
-  };
-  posts?: {
-    id: number;
-    title: string;
-    content: string;
-    thumbnail?: string;
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
-  comments?: {
-    id: number;
-    content: string;
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+
 
 export interface AuthContextType {
   isLoggedIn: boolean;
@@ -79,6 +56,7 @@ export interface CreatePostData {
   content: string;
   thumbnail?: string;
   published?: boolean;
+  
 }
 
 export interface UpdatePostData {
