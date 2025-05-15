@@ -50,7 +50,7 @@ class PostController {
   public async createPost(req: Request, res: Response): Promise<Response> {
     try {
       const user = req.user as TokenPayload;
-      const { title, content, thumbnail } = req.body;
+      const { title, content, thumbnail, published } = req.body;
 
       if (!title || !content) {
         return res
@@ -58,7 +58,7 @@ class PostController {
           .json({ error: 'Title and content are required' });
       }
 
-      const post = await this.postService.create({ title, content, thumbnail }, user.id);
+      const post = await this.postService.create({ title, content, thumbnail, published }, user.id);
 
       return res.status(201).json({ post });
     } catch (error) {
@@ -163,9 +163,5 @@ class PostController {
     }
   }
 }
-
-
-
-
 
 export default PostController;

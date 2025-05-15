@@ -1,13 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { usePost } from '../hooks/usePost';
+import { updatePost } from '../hooks/postsApi';
 
-const CreatePostPage = () => {
+const EditPostPage = () => {
+  const { id } = useParams();
+  const { post, loading, error } = usePost(id!);
   const [title, setTitle] = useState('');
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [content, setContent] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (post) {
+      setTitle(post.title);
+      setContent(post.content);
+      setThumbnail(post.thumbnail);
+    }
+  }, [post]);
 
   // Unified image upload helper
   const uploadImageFile = async (file: File): Promise<string> => {
@@ -15,7 +27,7 @@ const CreatePostPage = () => {
     formData.append('image', file);
 
     const response = await fetch('http://localhost:3000/creator/upload-image', {
-      method: 'POST',
+      method: 'PUT',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       body: formData,
     });
@@ -63,40 +75,35 @@ const CreatePostPage = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent, published: boolean) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return alert('Please enter a title');
     if (!content.trim()) return alert('Please add some content');
 
     try {
-      const response = await fetch('http://localhost:3000/creator/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          title: title.trim(),
-          content, // send raw HTML from TinyMCE
-          thumbnail: thumbnail || undefined,
-          published,
-        }),
+      await updatePost(Number(id), {
+        title: title.trim(),
+        content,
+        thumbnail: thumbnail || undefined,
+        published: post?.published || false
       });
 
-      if (!response.ok) throw new Error('Failed to create post');
-
-      alert(`Post ${published ? 'published' : 'saved to drafts'} successfully!`);
-      navigate('/');
+      alert('Post updated successfully!');
+      navigate('/profile');
     } catch (err) {
       console.error(err);
-      alert(err instanceof Error ? err.message : 'Submission error');
+      alert(err instanceof Error ? err.message : 'Update error');
     }
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!post) return <div>Post not found</div>;
+
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Create New Post</h1>
-      <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
+      <h1 className="text-3xl font-bold mb-6">Edit Post</h1>
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -182,25 +189,15 @@ const CreatePostPage = () => {
           />
         </div>
 
-        <div className="flex space-x-4">
-          <button
-            type="button"
-            onClick={(e) => handleSubmit(e, false)}
-            className="flex-1 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Save as Draft
-          </button>
-          <button
-            type="button"
-            onClick={(e) => handleSubmit(e, true)}
-            className="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Publish
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Update Post
+        </button>
       </form>
     </div>
   );
 };
 
-export default CreatePostPage;
+export default EditPostPage;

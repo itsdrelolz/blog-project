@@ -55,7 +55,7 @@ export interface CreatePostData {
   title: string;
   content: string;
   thumbnail?: string;
-  published?: boolean;
+  published: boolean;
   
 }
 

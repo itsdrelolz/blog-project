@@ -7,17 +7,11 @@ import { uploadMiddleware } from '../middlewares/upload.middleware';
 
 const router = Router();
 
-/*
-takes user to the dashboard where they can view all of their existing posts
-*/
+
 
 export const postController = new PostController(prisma);
 
-// router.get('/dashboard', async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         await  postController.getUserPosts(req, res);
-//     }
-// }
+
 
 // allows a user to create a post
 router.post(
@@ -74,5 +68,19 @@ router.post(
     }
   }
 );
+
+  
+router.put(
+  '/upload-image',
+  uploadMiddleware('image'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await postController.uploadImage(req, res);
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+    next(error);
+  }
+});
 
 export default router;
