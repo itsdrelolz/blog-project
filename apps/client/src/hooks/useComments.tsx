@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Comment } from "@blog-project/shared-types/types/comment";
 import useAuth from './useAuth';
+import { buildApiUrl } from '../config/api';
 
 export const useComments = (postId: number) => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -11,7 +12,7 @@ export const useComments = (postId: number) => {
   const fetchComments = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3000/public/posts/${postId}/comments`);
+      const response = await fetch(buildApiUrl(`/public/posts/${postId}/comments`));
       if (!response.ok) {
         throw new Error('Failed to fetch comments');
       }
@@ -39,7 +40,7 @@ export const useComments = (postId: number) => {
         'Authorization': `Bearer ${token}`
       };
 
-      const response = await fetch(`http://localhost:3000/public/posts/${postId}/comments`, {
+      const response = await fetch(buildApiUrl(`/public/posts/${postId}/comments`), {
         method: 'POST',
         headers,
         body: JSON.stringify({ content })
@@ -69,7 +70,7 @@ export const useComments = (postId: number) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/public/posts/${postId}/comments/${commentId}`, {
+      const response = await fetch(buildApiUrl(`/public/posts/${postId}/comments/${commentId}`), {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

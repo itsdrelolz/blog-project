@@ -1,9 +1,9 @@
 import { Post } from "@blog-project/shared-types/types/post";
 import { UpdatePostData } from "@blog-project/shared-types/types/post";
-
+import { buildApiUrl } from '../config/api';
 
 export const fetchPosts = async (page: number = 1, limit: number = 9): Promise<{ posts: Post[], total: number }> => {
-  const response = await fetch(`http://localhost:3000/public/posts?page=${page}&limit=${limit}`);
+  const response = await fetch(buildApiUrl(`/public/posts?page=${page}&limit=${limit}`));
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -17,7 +17,7 @@ export const fetchPosts = async (page: number = 1, limit: number = 9): Promise<{
 };
 
 export const fetchPost = async (id: number): Promise<{ post: Post }> => {
-  const response = await fetch(`http://localhost:3000/public/posts/${id}`);
+  const response = await fetch(buildApiUrl(`/public/posts/${id}`));
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -28,9 +28,8 @@ export const fetchPost = async (id: number): Promise<{ post: Post }> => {
   return response.json();
 };
 
-
 export const updatePost = async (id: number, post: UpdatePostData) => {
-  const response = await fetch(`http://localhost:3000/creator/posts/${id}`, {
+  const response = await fetch(buildApiUrl(`/creator/posts/${id}`), {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -46,7 +45,7 @@ export const updatePost = async (id: number, post: UpdatePostData) => {
 };
 
 export const deletePost = async (id: number) => {
-  const response = await fetch(`http://localhost:3000/creator/posts/${id}`, {
+  const response = await fetch(buildApiUrl(`/creator/posts/${id}`), {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`

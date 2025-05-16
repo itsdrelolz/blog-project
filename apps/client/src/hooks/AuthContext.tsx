@@ -1,6 +1,7 @@
 // hooks/AuthContext.tsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { GetUserData } from '@blog-project/shared-types/types/user';
+import { buildApiUrl } from '../config/api';
 
 export interface AuthContextType {
     isLoggedIn: boolean;
@@ -50,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (token) {
                 setIsLoading(true);
                 try {
-                    const response = await fetch('http://localhost:3000/auth/me', { 
+                    const response = await fetch(buildApiUrl('/auth/me'), { 
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

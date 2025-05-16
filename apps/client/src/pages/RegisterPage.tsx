@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { buildApiUrl } from '../config/api';
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -50,7 +51,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/signup", {
+      const response = await fetch(buildApiUrl("/auth/signup"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
