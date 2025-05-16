@@ -41,7 +41,7 @@ const PostPage = ({ id }: { id: string }) => {
           </h1>
 
           <div className="flex items-center text-gray-500 mb-8">
-            <span className="font-medium">Author: {post.author.name}</span>
+            <span className="font-medium">Author: {post.author?.name || 'Unknown Author'}</span>
             <span className="mx-2">•</span>
             <time dateTime={String(post.createdAt)}>{new Date(post.createdAt).toLocaleDateString()}</time>
           </div>
