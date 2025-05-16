@@ -10,7 +10,10 @@ import roleRouter from '../api/routes/role.routes';
 export default ({ app }: { app: express.Application }) => {
   // CORS configuration
   const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? ['https://blog-project-ten-phi.vercel.app']
+    ? [
+        'https://blog-project-ten-phi.vercel.app',
+        'https://blog-project-idtbro4f4-andre-harpers-projects.vercel.app'
+      ]
     : ['http://localhost:5173', 'http://localhost:3000'];
 
   // Add FRONTEND_URL to allowed origins if it exists
