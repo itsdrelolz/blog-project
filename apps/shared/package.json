@@ -10,8 +10,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "@types/express": "^5.0.0"
-  }
+  "description": ""
 }

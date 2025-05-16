@@ -1,4 +1,11 @@
-import { User } from '@prisma/client';
+export interface UserData {
+  id: number;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface LoginData {
   email: string;
@@ -6,7 +13,7 @@ export interface LoginData {
 }
 
 export interface AuthResponse {
-  user: Omit<User, 'password'>;
+  user: UserData;
   token: string;
 }
 
