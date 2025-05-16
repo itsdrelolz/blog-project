@@ -1,4 +1,4 @@
-import { Comment as CommentType } from '../types';
+import { Comment as CommentType } from '@blog-project/shared-types';
 
 
 interface CommentProps extends Omit<CommentType, 'authorId' | 'postId' | 'updatedAt'> {

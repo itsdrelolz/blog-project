@@ -1,7 +1,7 @@
 import { usePosts } from "../hooks/usePosts";
 import Post from "../components/Post";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { Post as PostType } from '../types';
+
 
 const HomePage = () => {
   const { posts, loading, error, currentPage, totalPages, goToPage } = usePosts();

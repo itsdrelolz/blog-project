@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Post as PostType } from '../types';
+import { Post as PostType } from '@blog-project/shared-types';
 
 const Post: React.FC<PostType> = ({ id, title, content, author, createdAt, thumbnail }) => {
   const navigate = useNavigate();

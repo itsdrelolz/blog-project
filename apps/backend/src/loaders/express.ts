@@ -7,10 +7,19 @@ import creatorRouter from '../api/routes/creator.routes';
 import publicRouter from '../api/routes/public.routes';
 import roleRouter from '../api/routes/role.routes';
 
-
 export default ({ app }: { app: express.Application }) => {
+  // CORS configuration
+  const corsOptions = {
+    origin: process.env.NODE_ENV === 'production'
+      ? process.env.FRONTEND_URL // Vercel frontend URL
+      : 'http://localhost:5173', // Development frontend URL
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
+  
   // Global middleware
-  app.use(cors());
+  app.use(cors(corsOptions));
   app.use(express.json());
   app.use(passport.initialize());
 
@@ -19,7 +28,6 @@ export default ({ app }: { app: express.Application }) => {
   app.use('/public', publicRouter);
   app.use('/creator', authMiddleware, creatorRouter);
   app.use('/roles', authMiddleware, roleRouter);
- 
 
   // Error handling
   app.use(

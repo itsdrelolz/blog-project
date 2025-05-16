@@ -3,7 +3,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePost } from '../hooks/usePost';
 import { updatePost } from '../hooks/postsApi';
-import { buildApiUrl } from '../config/api';
+
 
 const EditPostPage = () => {
   const { id } = useParams();
@@ -51,7 +51,7 @@ const EditPostPage = () => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(buildApiUrl('/creator/upload-image'), {
+    const response = await fetch(import.meta.env.VITE_API_URL + '/creator/upload-image', {
       method: 'PUT',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       body: formData,

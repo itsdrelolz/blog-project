@@ -1,8 +1,8 @@
-import { Post, UpdatePostData } from '../types';
-import { buildApiUrl } from '../config/api';
+import { Post, UpdatePostData } from '@blog-project/shared-types';
+
 
 export const fetchPosts = async (page: number = 1, limit: number = 9): Promise<{ posts: Post[], total: number }> => {
-  const response = await fetch(buildApiUrl(`/public/posts?page=${page}&limit=${limit}`));
+  const response = await fetch(import.meta.env.VITE_API_URL + `/public/posts?page=${page}&limit=${limit}`);
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -16,7 +16,7 @@ export const fetchPosts = async (page: number = 1, limit: number = 9): Promise<{
 };
 
 export const fetchPost = async (id: number): Promise<{ post: Post }> => {
-  const response = await fetch(buildApiUrl(`/public/posts/${id}`));
+  const response = await fetch(import.meta.env.VITE_API_URL + `/public/posts/${id}`);
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -28,7 +28,7 @@ export const fetchPost = async (id: number): Promise<{ post: Post }> => {
 };
 
 export const updatePost = async (id: number, post: UpdatePostData) => {
-  const response = await fetch(buildApiUrl(`/creator/posts/${id}`), {
+  const response = await fetch(import.meta.env.VITE_API_URL + `/creator/posts/${id}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -44,7 +44,7 @@ export const updatePost = async (id: number, post: UpdatePostData) => {
 };
 
 export const deletePost = async (id: number) => {
-  const response = await fetch(buildApiUrl(`/creator/posts/${id}`), {
+  const response = await fetch(import.meta.env.VITE_API_URL + `/creator/posts/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`

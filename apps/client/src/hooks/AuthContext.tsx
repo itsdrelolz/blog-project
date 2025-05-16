@@ -1,7 +1,7 @@
 // hooks/AuthContext.tsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { GetUserData } from '../types';
-import { buildApiUrl } from '../config/api';
+
+import { GetUserData } from '@blog-project/shared-types';
 
 export interface AuthContextType {
     isLoggedIn: boolean;
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (token) {
                 setIsLoading(true);
                 try {
-                    const response = await fetch(buildApiUrl('/auth/me'), { 
+                    const response = await fetch(import.meta.env.VITE_API_URL + '/auth/me', { 
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

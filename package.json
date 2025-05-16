@@ -1,14 +1,18 @@
 {
-  "name": "my-monorepo",
+  "name": "blog-project",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/client",
+    "apps/backend",
+    "apps/shared"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "dev": "npm run dev --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "build:client": "npm --workspace=apps/client run build",
+    "build:backend": "npm --workspace=apps/backend run build",
+    "prisma:generate": "npm --workspace=apps/backend run prisma:generate",
+    "start:backend": "npm --workspace=apps/backend run start",
+    "dev:client": "npm --workspace=apps/client run dev",
+    "dev:backend": "npm --workspace=apps/backend run dev"
   },
   "devDependencies": {
     "@types/react": "^18.3.18",

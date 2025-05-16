@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { useNavigate } from 'react-router-dom';
-import { buildApiUrl } from '../config/api';
+
 
 const CreatePostPage = () => {
   const [title, setTitle] = useState('');
@@ -39,7 +39,7 @@ const CreatePostPage = () => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(buildApiUrl('/creator/upload-image'), {
+    const response = await fetch(import.meta.env.VITE_API_URL + '/creator/upload-image', {
       method: 'POST',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       body: formData,
@@ -107,7 +107,7 @@ const CreatePostPage = () => {
     }
 
     try {
-      const response = await fetch(buildApiUrl('/creator/posts'), {
+      const response = await fetch(import.meta.env.VITE_API_URL + '/creator/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

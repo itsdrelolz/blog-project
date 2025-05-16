@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchPosts } from "./postsApi";
-import { Post } from "../types";
+import { Post } from "@blog-project/shared-types";
 
 export const usePosts = (initialPage: number = 1, postsPerPage: number = 9) => {
   const [posts, setPosts] = useState<Post[]>([]);

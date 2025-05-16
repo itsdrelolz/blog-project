@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Post from '../components/Post';
-import { Post as PostType } from '../types';
+import { Post as PostType } from '@blog-project/shared-types';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { buildApiUrl } from '../config/api';
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -16,7 +15,7 @@ const SearchPage = () => {
     const fetchSearchResults = async (query: string) => {
       setLoading(true);
       try {
-        const response = await fetch(buildApiUrl(`/public/posts/search?q=${encodeURIComponent(query)}`));
+        const response = await fetch(import.meta.env.VITE_API_URL + `/public/posts/search?q=${encodeURIComponent(query)}`);
         if (!response.ok) {
           throw new Error('Failed to fetch search results');
         }
