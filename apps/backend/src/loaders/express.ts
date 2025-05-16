@@ -9,10 +9,17 @@ import roleRouter from '../api/routes/role.routes';
 
 export default ({ app }: { app: express.Application }) => {
   // CORS configuration
+  const allowedOrigins = process.env.NODE_ENV === 'production'
+    ? ['https://blog-project-ten-phi.vercel.app']
+    : ['http://localhost:5173', 'http://localhost:3000'];
+
+  // Add FRONTEND_URL to allowed origins if it exists
+  if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+  }
+
   const corsOptions = {
-    origin: process.env.NODE_ENV === 'production'
-      ? process.env.FRONTEND_URL // Vercel frontend URL
-      : 'http://localhost:5173', // Development frontend URL
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
