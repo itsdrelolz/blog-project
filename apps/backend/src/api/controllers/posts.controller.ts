@@ -169,6 +169,22 @@ class PostController {
       return res.status(500).json({ error: 'Failed to delete post' });
     }
   }
+
+  public async searchPosts(req: Request, res: Response): Promise<Response> {
+    try {
+      const { q } = req.query;
+      
+      if (!q || typeof q !== 'string') {
+        return res.status(400).json({ message: 'Search query is required' });
+      }
+
+      const posts = await this.postService.searchPosts(q);
+      return res.json({ posts });
+    } catch (error) {
+      console.error('Search error:', error);
+      return res.status(500).json({ message: 'Error performing search' });
+    }
+  }
 }
 
 export default PostController;

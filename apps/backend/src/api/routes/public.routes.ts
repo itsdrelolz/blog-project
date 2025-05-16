@@ -4,12 +4,23 @@ import CommentController from '../controllers/comments.controller';
 import prisma from '../../lib/prisma';
 import { postController } from './creator.routes';
 import { Request, Response, NextFunction } from 'express';
+import { authMiddleware } from '../middlewares/auth.middleware';
+import { TokenPayload } from '@blog-project/shared-types/types/auth';
 
 const router = Router();
 
 const commentsController = new CommentController(prisma);
 
 // GET routes
+router.get('/posts/search', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await postController.searchPosts(req, res);
+  } catch (error) {
+    console.error('Error searching posts:', error);
+    res.status(500).json({ error: 'Failed to search posts' });
+  }
+});
+
 router.get('/posts', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await postController.getAllPublishedPosts(req, res);
@@ -61,36 +72,24 @@ router.get(
 // POST route
 router.post(
   '/posts/:postId/comments',
+  authMiddleware,
   commentValidators.createComment,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await commentsController.getPostComments(req, res);
+      await commentsController.addComment(req, res);
     } catch (error) {
-      console.error('Error fetching comments:', error);
-      res.status(500).json({ error: 'Failed to fetch comments' });
+      console.error('Error creating comment:', error);
+      res.status(500).json({ error: 'Failed to create comment' });
       next(error);
     }
   },
 );
 
-// PUT route
-router.put(
-  '/posts/:postId/comments/:commentId',
-  commentValidators.updateComment,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      await commentsController.updateComment(req, res); // Update specific comment
-    } catch (error) {
-      console.error('Error updating comment:', error);
-      res.status(500).json({ error: 'Failed to update comment' });
-      next(error);
-    }
-  },
-);
 
 // DELETE route
 router.delete(
   '/posts/:postId/comments/:commentId',
+  authMiddleware,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await commentsController.deleteComment(req, res); // Delete specific comment
@@ -100,6 +99,6 @@ router.delete(
       next(error);
     }
   },
-);
+);  
 
 export default router;

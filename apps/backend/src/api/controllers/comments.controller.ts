@@ -86,69 +86,36 @@ class CommentController {
     }
   }
 
-  public async updateComment(req: Request, res: Response): Promise<Response> {
-    try {
-      const user = req.user as TokenPayload;
-      const postId = parseInt(req.params.postId);
-      const commentId = parseInt(req.params.commentId!);
-      const { content } = req.body;
 
-      if (!content || isNaN(postId) || isNaN(commentId)) {
-        return res.status(400).json({ error: 'Invalid request data' });
-      }
 
-      const comment = await this.commentService.updateComment(
-        commentId,
-        postId,
-        content,
-        user.id,
-      ); // No need to pass user.role
+  
 
-      return res.json({ comment });
-    } catch (error) {
-      console.error('Error updating comment:', error);
-      if (error instanceof Error) {
-        switch (
-          error.message // Use a switch for cleaner error handling
-        ) {
-          case 'Comment not found':
-          case 'Post not found':
-            return res.status(404).json({ error: error.message });
-          case 'Not authorized to update this comment':
-            return res.status(403).json({ error: error.message });
-        }
-      }
-      return res.status(500).json({ error: 'Failed to update comment' }); // Consistent message
-    }
-  }
+
+  // Update so that only the post author can delete comments 
 
   public async deleteComment(req: Request, res: Response): Promise<Response> {
     try {
       const user = req.user as TokenPayload;
       const postId = parseInt(req.params.postId);
-      const commentId = parseInt(req.params.commentId!);
+      const commentId = parseInt(req.params.commentId);
 
       if (isNaN(postId) || isNaN(commentId)) {
-        return res.status(400).json({ error: 'Invalid ID provided' });
+        return res.status(400).json({ error: 'Invalid post or comment ID' });
       }
 
-      await this.commentService.deleteComment(commentId, postId, user.id);
-
+      const comment = await this.commentService.deleteComment(commentId, postId, user.id);
       return res.status(204).send();
     } catch (error) {
       console.error('Error deleting comment:', error);
       if (error instanceof Error) {
-        switch (
-          error.message // Use a switch for cleaner error handling
-        ) {
-          case 'Comment not found':
-          case 'Post not found':
-            return res.status(404).json({ error: error.message });
-          case 'Not authorized to delete this comment':
-            return res.status(403).json({ error: error.message });
+        if (error.message === 'Comment not found') {
+          return res.status(404).json({ error: error.message });
+        }
+        if (error.message === 'Not authorized to delete this comment') {
+          return res.status(403).json({ error: error.message });
         }
       }
-      return res.status(500).json({ error: 'Failed to delete comment' }); // Consistent message
+      return res.status(500).json({ error: 'Failed to delete comment' });
     }
   }
 }

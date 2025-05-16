@@ -3,11 +3,11 @@ import { User } from "./user";
 export interface Comment {
   id: number;
   content: string;
-  authorId?: number;
+  authorId: number;
   postId: number;
   createdAt: Date;
   updatedAt: Date;
-  author?: User;
+  author: User;
 }
 
 

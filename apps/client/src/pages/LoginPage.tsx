@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -91,7 +92,12 @@ const LoginPage = () => {
             className={`w-full bg-green-500 hover:bg-green-700 text-white py-2 rounded-md transition-colors mt-2 ${isLoading? 'opacity-75 cursor-not-allowed': ''}`}
             disabled={isLoading}
           >
-            {isLoading? 'Logging in...': 'Login'}
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <LoadingSpinner size="small" text="" />
+                <span className="ml-2">Logging in...</span>
+              </div>
+            ) : 'Login'}
           </button>
 
           {error && <div className="text-red-500 mt-2">{error}</div>}

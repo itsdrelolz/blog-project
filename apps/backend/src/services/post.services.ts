@@ -139,4 +139,44 @@ export class PostService {
       },
     });
   }
+
+  async searchPosts(query: string) {
+    return this.prisma.post.findMany({
+      where: {
+        AND: [
+          {
+            published: true,
+          },
+          {
+            OR: [
+              {
+                title: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                content: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }

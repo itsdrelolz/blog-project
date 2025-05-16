@@ -45,44 +45,54 @@ export class CommentService {
     });
   }
 
-  async updateComment(
-    commentId: number,
-    postId: number,
-    content: string,
-    userId: number,
-  ) {
-    const comment = await this.prisma.comment.findFirst({
-      where: { id: commentId, postId },
-    });
-    if (!comment) {
-      throw new Error('Comment not found');
-    }
+  // async updateComment(
+  //   commentId: number,
+  //   postId: number,
+  //   content: string,
+  //   userId: number,
+  // ) {
+  //   const comment = await this.prisma.comment.findFirst({
+  //     where: { id: commentId, postId },
+  //   });
+  //   if (!comment) {
+  //     throw new Error('Comment not found');
+  //   }
 
-    if (comment.authorId !== userId) {
-      // Authorization check
-      throw new Error('Not authorized to update this comment');
-    }
+  //   if (comment.authorId !== userId) {
+  //     // Authorization check
+  //     throw new Error('Not authorized to update this comment');
+  //   }
 
-    return this.prisma.comment.update({
-      where: { id: commentId },
-      data: { content },
-      include: { author: { select: { id: true, email: true, name: true } } },
-    });
-  }
+  //   return this.prisma.comment.update({
+  //     where: { id: commentId },
+  //     data: { content },
+  //     include: { author: { select: { id: true, email: true, name: true } } },
+  //   });
+  // }
 
   async deleteComment(commentId: number, postId: number, userId: number) {
     const comment = await this.prisma.comment.findFirst({
       where: { id: commentId, postId },
+      include: {
+        post: {
+          select: {
+            authorId: true
+          }
+        }
+      }
     });
+
     if (!comment) {
       throw new Error('Comment not found');
     }
 
-    if (comment.authorId !== userId) {
-      // Authorization check
+    // Check if user is either the comment author or the post author
+    if (comment.authorId !== userId && comment.post.authorId !== userId) {
       throw new Error('Not authorized to delete this comment');
     }
 
-    return this.prisma.comment.delete({ where: { id: commentId } });
+    return this.prisma.comment.delete({
+      where: { id: commentId },
+    });
   }
 }

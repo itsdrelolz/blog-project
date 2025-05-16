@@ -17,20 +17,6 @@ export const commentValidators = {
       .withMessage('Content must be at least 10 characters')
       .escape(),
   ],
-
-  updateComment: [
-    body('title')
-      .optional()
-      .trim()
-      .isLength({ min: 3, max: 100 })
-      .withMessage('Title must be between 3 and 100 characters')
-      .escape(),
-
-    body('content')
-      .optional()
-      .trim()
-      .isLength({ min: 10 })
-      .withMessage('Content must be at least 10 characters')
-      .escape(),
-  ],
 };
+
+  

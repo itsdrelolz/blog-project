@@ -8,8 +8,11 @@ import CreatePostPage from './pages/CreatePostPage'
 import ProfilePage from './pages/ProfilePage'
 import PostPage from './pages/PostPage'
 import NotFoundPage from './pages/NotFoundPage'
+import SearchPage from './pages/SearchPage'
 import { Route, Routes, useParams } from 'react-router-dom'
 import EditPostPage from './pages/EditPostPage'
+import ProtectedRoute from './components/ProtectedRoute'
+import RoleProtectedRoute from './components/RoleProtectedRoute'
 
 const PostPageWrapper = () => {
   const { id } = useParams();
@@ -26,10 +29,39 @@ const App = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/auth/signup" element={<RegisterPage />} />
           <Route path="/auth/login" element={<LoginPage />} />
-          <Route path="/create-post" element={<CreatePostPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/post/:id" element={<PostPageWrapper />} />
-          <Route path="/edit/:id" element={<EditPostPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          
+          {/* Protected Routes */}
+          <Route 
+            path="/create-post" 
+            element={
+              <ProtectedRoute>
+                <RoleProtectedRoute allowedRoles={['author', 'admin']}>
+                  <CreatePostPage />
+                </RoleProtectedRoute>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/edit/:id" 
+            element={
+              <ProtectedRoute>
+                <RoleProtectedRoute allowedRoles={['author', 'admin']}>
+                  <EditPostPage />
+                </RoleProtectedRoute>
+              </ProtectedRoute>
+            } 
+          />
+          
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

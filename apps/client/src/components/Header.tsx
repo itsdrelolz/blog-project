@@ -5,7 +5,7 @@ import logo from "../assets/logo.png";
 import useAuth from "../hooks/useAuth";
 
 const Header = () => {
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, user } = useAuth();
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,10 +44,14 @@ const Header = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by title…"
+              placeholder="Search by title or content..."
               className="px-2 py-1 w-full focus:outline-none"
             />
-            <button type="submit" className="px-3 py-1 bg-indigo-600 text-white hover:bg-indigo-700">
+            <button 
+              type="submit" 
+              className="px-3 py-1 bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+              disabled={!searchTerm.trim()}
+            >
               🔍
             </button>
           </form>
@@ -71,7 +75,9 @@ const Header = () => {
           <nav className="hidden sm:flex sm:items-center sm:space-x-4">
             {isLoggedIn ? (
               <>
-                <Link to="/create-post" className="hover:underline">New Post</Link>
+                {user?.role?.name === 'author' || user?.role?.name === 'admin' ? (
+                  <Link to="/create-post" className="hover:underline">New Post</Link>
+                ) : null}
                 <Link to="/about" className="hover:underline">About</Link>
                 <Link to="/profile" className="hover:underline">Profile</Link>
                 <button onClick={handleLogout} className="hover:underline">Logout</button>
@@ -94,23 +100,29 @@ const Header = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by title…"
+              placeholder="Search by title or content..."
               className="flex-1 px-3 py-2 border rounded-l focus:outline-none"
             />
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-r hover:bg-indigo-700">
+            <button 
+              type="submit" 
+              className="px-4 py-2 bg-indigo-600 text-white rounded-r hover:bg-indigo-700 transition-colors"
+              disabled={!searchTerm.trim()}
+            >
               🔍
             </button>
           </form>
           <div className="flex flex-col p-2 space-y-1">
             {isLoggedIn ? (
               <>
-                <Link to="/create-post" onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
-                  New Post
-                </Link>
-                <Link to="/about"       onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
+                {user?.role?.name === 'author' || user?.role?.name === 'admin' ? (
+                  <Link to="/create-post" onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
+                    New Post
+                  </Link>
+                ) : null}
+                <Link to="/about" onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
                   About
                 </Link>
-                <Link to="/profile"     onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
+                <Link to="/profile" onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
                   Profile
                 </Link>
                 <button onClick={handleLogout} className="text-left px-3 py-2 hover:bg-gray-100 rounded">
@@ -119,10 +131,10 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Link to="/about"       onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
-                  About 
+                <Link to="/about" onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
+                  About
                 </Link>
-                <Link to="/auth/login"  onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
+                <Link to="/auth/login" onClick={() => setMenuOpen(false)} className="block px-3 py-2 hover:bg-gray-100 rounded">
                   Login
                 </Link>
               </>

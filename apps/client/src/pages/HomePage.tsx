@@ -1,10 +1,15 @@
 import { usePosts } from "../hooks/usePosts";
 import Post from "../components/Post";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const HomePage = () => {
   const { posts, loading, error, currentPage, totalPages, goToPage } = usePosts();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <LoadingSpinner size="large" text="Loading posts..." />
+    </div>
+  );
   if (error) return <div>Error: {error.message}</div>;
   if (!posts.length) return <div>No posts available.</div>;
 

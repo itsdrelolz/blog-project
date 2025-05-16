@@ -2,13 +2,20 @@ import CommentSection from "../components/CommentSection";
 import { usePost } from "../hooks/usePost";
 import { useComments } from "../hooks/useComments";
 import DOMPurify from "dompurify";
+import useAuth from "../hooks/useAuth";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const PostPage = ({ id }: { id: string }) => {
   const { post, loading: postLoading, error: postError } = usePost(id);
   const numericId = parseInt(id, 10);
-  const { comments, loading: commentsLoading, error: commentsError, addComment } = useComments(numericId);
+  const { comments, loading: commentsLoading, error: commentsError, addComment, deleteComment } = useComments(numericId);
+  const { user } = useAuth();
 
-  if (postLoading || commentsLoading) return <div>Loading...</div>;
+  if (postLoading || commentsLoading) return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <LoadingSpinner size="large" text="Loading post..." />
+    </div>
+  );
   if (postError) return <div>Error: {postError.message}</div>;
   if (commentsError) return <div>Error loading comments: {commentsError.message}</div>;
   if (!post) return <div>No post found</div>;
@@ -45,7 +52,14 @@ const PostPage = ({ id }: { id: string }) => {
           />
         </div>
       </article>
-      <CommentSection comments={comments} onAddComment={addComment} />
+      
+      <CommentSection 
+        comments={comments} 
+        onAddComment={addComment} 
+        currentUserId={user?.id || null}
+        postAuthorId={post.authorId}
+        onDeleteComment={deleteComment}
+      />
     </main>
   );
 };
