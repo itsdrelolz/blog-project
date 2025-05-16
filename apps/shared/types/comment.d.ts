@@ -1,3 +1,16 @@
+import { User } from "./user";
+
+export interface Comment {
+  id: number;
+  content: string;
+  authorId?: number;
+  postId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  author?: User;
+}
+
+
 export interface CreateCommentDto {
     content: string;
   }

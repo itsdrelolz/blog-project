@@ -18,8 +18,15 @@ class PostController {
     res: Response,
   ): Promise<Response> {
     try {
-      const posts = await this.postService.findAllPublished();
-      return res.json({ posts });
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 9;
+
+      if (page < 1 || limit < 1) {
+        return res.status(400).json({ error: 'Invalid pagination parameters' });
+      }
+
+      const result = await this.postService.findAllPublished(page, limit);
+      return res.json(result);
     } catch (error) {
       console.error('Error getting all published posts:', error);
       return res.status(500).json({ error: 'Failed to get published posts' });

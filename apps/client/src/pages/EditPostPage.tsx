@@ -11,6 +11,10 @@ const EditPostPage = () => {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [content, setContent] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [errors, setErrors] = useState<{
+    title?: string;
+    content?: string;
+  }>({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,6 +24,26 @@ const EditPostPage = () => {
       setThumbnail(post.thumbnail);
     }
   }, [post]);
+
+  // Validation helper
+  const validateForm = () => {
+    const newErrors: { title?: string; content?: string } = {};
+    
+    if (!title.trim()) {
+      newErrors.title = 'Title is required';
+    } else if (title.trim().length < 3) {
+      newErrors.title = 'Title must be at least 3 characters';
+    }
+
+    if (!content.trim()) {
+      newErrors.content = 'Content is required';
+    } else if (content.replace(/<[^>]*>/g, '').trim().length < 10) {
+      newErrors.content = 'Content must be at least 10 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Unified image upload helper
   const uploadImageFile = async (file: File): Promise<string> => {
@@ -77,8 +101,10 @@ const EditPostPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return alert('Please enter a title');
-    if (!content.trim()) return alert('Please add some content');
+    
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       await updatePost(Number(id), {
@@ -113,10 +139,18 @@ const EditPostPage = () => {
             id="title"
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (errors.title) {
+                setErrors(prev => ({ ...prev, title: undefined }));
+              }
+            }}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className={`w-full px-3 py-2 border ${errors.title ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
           />
+          {errors.title && (
+            <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+          )}
         </div>
 
         {/* Thumbnail */}
@@ -165,12 +199,17 @@ const EditPostPage = () => {
         {/* Content editor */}
         <div>
           <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-            Content
+            Content <span className="text-red-500">*</span>
           </label>
           <Editor
             apiKey={import.meta.env.VITE_TINY_MCE_KEY}
             value={content}
-            onEditorChange={setContent}
+            onEditorChange={(newContent: string) => {
+              setContent(newContent);
+              if (errors.content) {
+                setErrors(prev => ({ ...prev, content: undefined }));
+              }
+            }}
             init={{
               height: 500,
               menubar: true,
@@ -187,6 +226,9 @@ const EditPostPage = () => {
               content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }}
           />
+          {errors.content && (
+            <p className="mt-1 text-sm text-red-600">{errors.content}</p>
+          )}
         </div>
 
         <button

@@ -3,7 +3,9 @@ import sanitizeHtml from 'sanitize-html';
 
 export const postValidators = {
   createPost: [
-    
+    body('title')
+      .isLength({ min: 3 })
+      .withMessage('Title must be at least 3 characters'),
     body('content')
       .customSanitizer(raw =>
         sanitizeHtml(raw, {
@@ -24,6 +26,9 @@ export const postValidators = {
   
   ],
   updatePost: [
+    body('title')
+      .isLength({ min: 3 })
+      .withMessage('Title must be at least 3 characters'),
     body('content')
       .customSanitizer(raw =>
         sanitizeHtml(raw, {

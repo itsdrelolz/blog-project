@@ -61,38 +61,54 @@ export class PostService {
     });
   }
 
-  async findAllPublished() {
-    return this.prisma.post.findMany({
-      where: {
-        published: true,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
+  async findAllPublished(page: number = 1, limit: number = 9) {
+    const skip = (page - 1) * limit;
+    
+    const [posts, total] = await Promise.all([
+      this.prisma.post.findMany({
+        where: {
+          published: true,
         },
-        comments: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                email: true,
-                name: true,
-              },
+        include: {
+          author: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
             },
           },
-          orderBy: {
-            createdAt: 'desc',
+          comments: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  name: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+      }),
+      this.prisma.post.count({
+        where: {
+          published: true,
+        },
+      }),
+    ]);
+
+    return {
+      posts,
+      total,
+    };
   }
 
   async findByAuthorId(authorId: number) {

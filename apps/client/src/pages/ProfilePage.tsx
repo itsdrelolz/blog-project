@@ -76,30 +76,30 @@ const ProfilePage = () => {
     };
 
     return (
-        <>
-            <div>
-                <h1>{user.name}</h1>
-                <p>{user.email}</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+                <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
+                <p className="mt-2 text-gray-600">Manage your blog posts</p>
             </div>
             
-            <div className="border-b border-gray-200">
-                <nav className="-mb-px flex">
+            <div className="border-b border-gray-200 mb-8">
+                <nav className="-mb-px flex space-x-8">
                     <button
                         onClick={() => setActiveTab('published')}
-                        className={`py-2 px-4 border-b-2 font-medium text-sm ${
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${
                             activeTab === 'published'
                                 ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }`}
                     >
                         Published ({publishedPosts.length})
                     </button>
                     <button
                         onClick={() => setActiveTab('unpublished')}
-                        className={`py-2 px-4 border-b-2 font-medium text-sm ${
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${
                             activeTab === 'unpublished'
                                 ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }`}
                     >
                         Unpublished ({unpublishedPosts.length})
@@ -107,11 +107,11 @@ const ProfilePage = () => {
                 </nav>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 p-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {activeTab === 'published' && publishedPosts.length > 0 ? (
                         publishedPosts.map((post) => (
-                            <div key={post.id} className="relative">
+                            <div key={post.id} className="flex flex-col">
                                 <Post
                                     {...post}
                                     authorId={user.id}
@@ -120,22 +120,22 @@ const ProfilePage = () => {
                                     comments={[]}
                                     thumbnail={post.thumbnail || null}
                                 />
-                                <div className="absolute top-2 right-2 bg-white rounded shadow-md">
+                                <div className="mt-4 flex space-x-2">
                                     <button
                                         onClick={() => handleEdit(post.id)}
-                                        className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                        className="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-md text-sm font-medium transition-colors"
                                     >
                                         Edit
                                     </button>
                                     <button
                                         onClick={() => handleUnpublish(post.id)}
-                                        className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                        className="flex-1 bg-gray-50 text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-md text-sm font-medium transition-colors"
                                     >
                                         Unpublish
                                     </button>
                                     <button
                                         onClick={() => handleDelete(post.id)}
-                                        className="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                        className="flex-1 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-md text-sm font-medium transition-colors"
                                     >
                                         Delete
                                     </button>
@@ -144,7 +144,7 @@ const ProfilePage = () => {
                         ))
                     ) : activeTab === 'unpublished' && unpublishedPosts.length > 0 ? (
                         unpublishedPosts.map((post) => (
-                            <div key={post.id} className="relative">
+                            <div key={post.id} className="flex flex-col">
                                 <Post
                                     {...post}
                                     authorId={user.id}
@@ -153,22 +153,22 @@ const ProfilePage = () => {
                                     comments={[]}
                                     thumbnail={post.thumbnail || null}
                                 />
-                                <div className="absolute top-2 right-2 bg-white rounded shadow-md">
+                                <div className="mt-4 flex space-x-2">
                                     <button
                                         onClick={() => handleEdit(post.id)}
-                                        className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                        className="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-md text-sm font-medium transition-colors"
                                     >
                                         Edit
                                     </button>
                                     <button
                                         onClick={() => handlePublish(post.id)}
-                                        className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                        className="flex-1 bg-green-50 text-green-600 hover:bg-green-100 px-4 py-2 rounded-md text-sm font-medium transition-colors"
                                     >
                                         Publish
                                     </button>
                                     <button
                                         onClick={() => handleDelete(post.id)}
-                                        className="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                        className="flex-1 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-md text-sm font-medium transition-colors"
                                     >
                                         Delete
                                     </button>
@@ -176,13 +176,13 @@ const ProfilePage = () => {
                             </div>
                         ))
                     ) : (
-                        <div className="col-span-full text-center text-gray-500">
-                            No posts to display in this tab
+                        <div className="col-span-full text-center py-12 bg-gray-50 rounded-lg">
+                            <p className="text-gray-500 text-lg">No posts to display in this tab</p>
                         </div>
                     )}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

@@ -1,12 +1,17 @@
+import CommentSection from "../components/CommentSection";
 import { usePost } from "../hooks/usePost";
+import { useComments } from "../hooks/useComments";
 import DOMPurify from "dompurify";
 
 const PostPage = ({ id }: { id: string }) => {
-  const { post, loading, error } = usePost(id);
-  if (loading) return <div>Loading...</div>;
-  if (error)   return <div>Error: {error.message}</div>;
-  if (!post)   return <div>No post found</div>;
+  const { post, loading: postLoading, error: postError } = usePost(id);
+  const numericId = parseInt(id, 10);
+  const { comments, loading: commentsLoading, error: commentsError, addComment } = useComments(numericId);
 
+  if (postLoading || commentsLoading) return <div>Loading...</div>;
+  if (postError) return <div>Error: {postError.message}</div>;
+  if (commentsError) return <div>Error loading comments: {commentsError.message}</div>;
+  if (!post) return <div>No post found</div>;
 
   const cleanHtml = DOMPurify.sanitize(post.content);
 
@@ -32,7 +37,6 @@ const PostPage = ({ id }: { id: string }) => {
             <span className="font-medium">Author: {post.author.name}</span>
             <span className="mx-2">•</span>
             <time dateTime={String(post.createdAt)}>{new Date(post.createdAt).toLocaleDateString()}</time>
-            
           </div>
 
           <div
@@ -41,6 +45,7 @@ const PostPage = ({ id }: { id: string }) => {
           />
         </div>
       </article>
+      <CommentSection comments={comments} onAddComment={addComment} />
     </main>
   );
 };

@@ -6,12 +6,7 @@ export interface Author {
   name: string;
 }
 
-export interface Comment {
-  id: number;
-  content: string;
-  authorId: number;
-  postId: number;
-}
+
 export interface Post {
   id: number;
   createdAt: Date;
@@ -21,7 +16,7 @@ export interface Post {
   authorId: number;
   published: boolean;
   author: Author;
-  comments: any;
+  comments: Comment[];
   thumbnail: string | null;
 }
 
