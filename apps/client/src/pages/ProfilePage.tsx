@@ -126,9 +126,7 @@ const ProfilePage = () => {
                                     <div key={post.id} className="flex flex-col">
                                         <Post
                                             {...post}
-                                            authorId={user.id}
                                             published={post.published}
-                                            author={user}
                                             comments={[]}
                                             thumbnail={post.thumbnail || null}
                                         />
@@ -159,9 +157,7 @@ const ProfilePage = () => {
                                     <div key={post.id} className="flex flex-col">
                                         <Post
                                             {...post}
-                                            authorId={user.id}
                                             published={post.published}
-                                            author={user}
                                             comments={[]}
                                             thumbnail={post.thumbnail || null}
                                         />

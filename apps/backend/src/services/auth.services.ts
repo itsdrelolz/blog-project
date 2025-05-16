@@ -94,6 +94,13 @@ export class AuthService {
             createdAt: true,
             updatedAt: true,
             published: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
           },
         },
         comments: {
