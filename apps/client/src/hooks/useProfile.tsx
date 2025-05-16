@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GetUserData } from "@blog-project/shared-types/types/user";
+import { GetUserData } from "../types";
 import useAuth from "./useAuth";
 
 export const useProfile = () => {

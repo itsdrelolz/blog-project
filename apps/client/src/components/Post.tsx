@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Post } from "@blog-project/shared-types/types/post";
+import { Post as PostType } from '../types';
 
-const Post: React.FC<Post> = ({ id, title, content, author, createdAt, thumbnail }) => {
+const Post: React.FC<PostType> = ({ id, title, content, author, createdAt, thumbnail }) => {
   const navigate = useNavigate();
   const formattedDate = new Date(createdAt).toLocaleDateString();
   const [imageError, setImageError] = useState(false);

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchPost } from "./postsApi";
-import { Post } from "@blog-project/shared-types/types/post";
-import { Comment } from "@blog-project/shared-types/types/comment";
+import { Post, Comment } from "../types";
 
 export const usePost = (id: string) => {
   const [post, setPost] = useState<(Post & { comments: Comment[] }) | null>(null);

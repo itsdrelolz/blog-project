@@ -1,5 +1,4 @@
-import { Post } from "@blog-project/shared-types/types/post";
-import { UpdatePostData } from "@blog-project/shared-types/types/post";
+import { Post, UpdatePostData } from '../types';
 import { buildApiUrl } from '../config/api';
 
 export const fetchPosts = async (page: number = 1, limit: number = 9): Promise<{ posts: Post[], total: number }> => {

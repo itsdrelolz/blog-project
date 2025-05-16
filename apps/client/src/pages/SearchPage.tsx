@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Post from '../components/Post';
-import { Post as PostType } from '@blog-project/shared-types/types/post';
+import { Post as PostType } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { buildApiUrl } from '../config/api';
 

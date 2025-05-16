@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { deletePost, updatePost } from "../hooks/postsApi";
 import { UpdatePostData } from "@blog-project/shared-types/types/post";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { Post as PostType } from '../types';
 
 const ProfilePage = () => {
     const { user, isLoading } = useAuth() as AuthContextType;  

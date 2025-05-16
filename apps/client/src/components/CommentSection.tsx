@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Comment as CommentType } from "@blog-project/shared-types/types/comment";
+import { Comment as CommentType } from '../types';
 
 import useAuth from "../hooks/useAuth";
 import { Link } from "react-router-dom";

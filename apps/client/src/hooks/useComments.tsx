@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Comment } from "@blog-project/shared-types/types/comment";
+import { Comment } from '../types';
 import useAuth from './useAuth';
 import { buildApiUrl } from '../config/api';
 

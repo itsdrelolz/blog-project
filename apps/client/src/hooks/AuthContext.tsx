@@ -1,6 +1,6 @@
 // hooks/AuthContext.tsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { GetUserData } from '@blog-project/shared-types/types/user';
+import { GetUserData } from '../types';
 import { buildApiUrl } from '../config/api';
 
 export interface AuthContextType {
