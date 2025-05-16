@@ -1,5 +1,5 @@
 import type { Comment as CommentType } from "@blog-project/shared-types/types/comment";
-import type { User } from "@blog-project/shared-types/types/user";
+
 
 interface CommentProps extends Omit<CommentType, 'authorId' | 'postId' | 'updatedAt'> {
     currentUserId: number | null;
