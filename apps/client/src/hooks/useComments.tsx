@@ -50,11 +50,13 @@ export const useComments = (postId: number) => {
         throw new Error('Failed to add comment');
       }
 
-      const newComment = await response.json();
+      // API returns { comment: Comment }
+      const data = await response.json();
+      const newCommentData = data.comment;
       const formattedComment: Comment = {
-        ...newComment,
-        createdAt: new Date(newComment.createdAt),
-        updatedAt: new Date(newComment.updatedAt)
+        ...newCommentData,
+        createdAt: new Date(newCommentData.createdAt),
+        updatedAt: new Date(newCommentData.updatedAt)
       };
       
       setComments(prev => [...prev, formattedComment]);
