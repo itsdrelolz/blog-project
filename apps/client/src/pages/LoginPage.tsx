@@ -7,20 +7,41 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { login, isLoggedIn} = useAuth();
+  const { login, isLoggedIn } = useAuth();
 
   useEffect(() => {
     if (isLoggedIn) {
-        navigate('/');
+      navigate('/');
     }
-}, [isLoggedIn, navigate]);
+  }, [isLoggedIn, navigate]);
+
+  const validateInputs = () => {
+    if (!email.trim()) {
+      setError("Email is required");
+      return false;
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+      setError("Please enter a valid email address");
+      return false;
+    }
+    if (!password) {
+      setError("Password is required");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!validateInputs()) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -30,86 +51,95 @@ const LoginPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          email: email.trim(),
           password,
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
         if (response.status === 429) {
-          setError('Too many login attempts. Please try again later.');
+          throw new Error('Too many login attempts. Please try again later.');
         } else {
-          setError(errorData.message || 'Invalid email or password');
+          throw new Error(data.message || 'Invalid email or password');
         }
-        return;
       }
 
-      const data = await response.json();
-      const token = data.token;
-
-      console.log("Login successful", data);
-
-      if (token) {
-        login(token);
+      if (data.token) {
+        login(data.token);
         navigate("/");
       } else {
-        setError("Login failed: No token received");
+        throw new Error("Login failed: No token received");
       }
     } catch (error) {
       console.error("Error during login:", error);
-      setError((error as Error).message);
+      setError(error instanceof Error ? error.message : "An unexpected error occurred");
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="w-full max-w-md bg-white p-8 rounded-md shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <div>
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full border border-gray-300 p-2 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-green-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center mb-6">Welcome Back</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              required
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full border border-gray-300 p-2 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-green-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              required
+            />
+          </div>
+
+          {error && (
+            <div className="text-red-500 text-sm mt-2">{error}</div>
+          )}
 
           <button
             type="submit"
-            className={`w-full bg-green-500 hover:bg-green-700 text-white py-2 rounded-md transition-colors mt-2 ${isLoading? 'opacity-75 cursor-not-allowed': ''}`}
             disabled={isLoading}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
           >
             {isLoading ? (
-              <div className="flex items-center justify-center">
+              <div className="flex items-center">
                 <LoadingSpinner size="small" text="" />
                 <span className="ml-2">Logging in...</span>
               </div>
-            ) : 'Login'}
+            ) : (
+              'Log In'
+            )}
           </button>
 
-          {error && <div className="text-red-500 mt-2">{error}</div>}
-
-          <p className="mt-4 text-center">
+          <p className="mt-4 text-center text-sm text-gray-600">
             Don't have an account?{" "}
-            <Link to="/auth/signup" className="text-green-500 hover:underline">
-              Sign Up
+            <Link to="/auth/signup" className="text-indigo-600 hover:text-indigo-500">
+              Sign up
             </Link>
           </p>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
