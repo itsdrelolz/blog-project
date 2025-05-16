@@ -129,6 +129,11 @@ const ProfilePage = () => {
                                             published={post.published}
                                             comments={[]}
                                             thumbnail={post.thumbnail || null}
+                                            author={{
+                                                id: user.id,
+                                                name: user.name,
+                                                email: user.email
+                                            }}
                                         />
                                         <div className="mt-4 flex space-x-2">
                                             <button
@@ -160,6 +165,11 @@ const ProfilePage = () => {
                                             published={post.published}
                                             comments={[]}
                                             thumbnail={post.thumbnail || null}
+                                            author={{
+                                                id: user.id,
+                                                name: user.name,
+                                                email: user.email
+                                            }}
                                         />
                                         <div className="mt-4 flex space-x-2">
                                             <button
