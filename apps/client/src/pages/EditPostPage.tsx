@@ -3,6 +3,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePost } from '../hooks/usePost';
 import { updatePost } from '../hooks/postsApi';
+import { buildApiUrl } from '../config/api';
 
 const EditPostPage = () => {
   const { id } = useParams();
@@ -50,7 +51,7 @@ const EditPostPage = () => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch('http://localhost:3000/creator/upload-image', {
+    const response = await fetch(buildApiUrl('/creator/upload-image'), {
       method: 'PUT',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       body: formData,
@@ -86,16 +87,27 @@ const EditPostPage = () => {
   };
 
   const handleEditorImageUpload = async (
-    blobInfo: { blob: () => Blob; filename: () => string },
-    success: (url: string) => void,
-    failure: (msg: string) => void
-  ) => {
+    blobInfo: any,
+    progress?: (percent: number) => void
+  ): Promise<string> => {
     try {
-      const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type });
+      const file = new File([blobInfo.blob()], blobInfo.filename(), { 
+        type: blobInfo.blob().type 
+      });
+      
+      if (progress) {
+        progress(0);
+      }
+      
       const url = await uploadImageFile(file);
-      success(url);
-    } catch {
-      failure('Image upload failed');
+      
+      if (progress) {
+        progress(100);
+      }
+      
+      return url;
+    } catch (error) {
+      throw new Error('Image upload failed');
     }
   };
 

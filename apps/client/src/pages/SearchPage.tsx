@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import Post from '../components/Post';
 import { Post as PostType } from '@blog-project/shared-types/types/post';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { buildApiUrl } from '../config/api';
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -12,26 +13,25 @@ const SearchPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const searchPosts = async () => {
+    const fetchSearchResults = async (query: string) => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await fetch(`http://localhost:3000/public/posts/search?q=${encodeURIComponent(query)}`);
-        
+        const response = await fetch(buildApiUrl(`/public/posts/search?q=${encodeURIComponent(query)}`));
         if (!response.ok) {
           throw new Error('Failed to fetch search results');
         }
-
         const data = await response.json();
         setPosts(data.posts);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred while searching');
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+        setError(error instanceof Error ? error.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
     };
 
     if (query) {
-      searchPosts();
+      fetchSearchResults(query);
     } else {
       setPosts([]);
       setLoading(false);

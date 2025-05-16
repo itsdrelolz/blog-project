@@ -75,16 +75,27 @@ const CreatePostPage = () => {
   };
 
   const handleEditorImageUpload = async (
-    blobInfo: { blob: () => Blob; filename: () => string },
-    success: (url: string) => void,
-    failure: (msg: string) => void
-  ) => {
+    blobInfo: any,
+    progress?: (percent: number) => void
+  ): Promise<string> => {
     try {
-      const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type });
+      const file = new File([blobInfo.blob()], blobInfo.filename(), { 
+        type: blobInfo.blob().type 
+      });
+      
+      if (progress) {
+        progress(0);
+      }
+      
       const url = await uploadImageFile(file);
-      success(url);
-    } catch {
-      failure('Image upload failed');
+      
+      if (progress) {
+        progress(100);
+      }
+      
+      return url;
+    } catch (error) {
+      throw new Error('Image upload failed');
     }
   };
 
@@ -96,7 +107,7 @@ const CreatePostPage = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/creator/posts', {
+      const response = await fetch(buildApiUrl('/creator/posts'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
