@@ -2,15 +2,16 @@
   "name": "api",
   "version": "0.0.0",
   "private": true,
-  "main": "app.ts",
+  "main": "src/app.ts",
   "scripts": {
     "dev": "tsc && node --watch -r ts-node/register ./src/app.ts",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint:fix": "eslint . --fix",
-    "build": "tsc",
+    "build": "npm install && npx prisma generate && tsc",
     "start": "node dist/app.js",
-    "init-storage": "ts-node src/scripts/init-storage.ts"
+    "init-storage": "ts-node src/scripts/init-storage.ts",
+    "postinstall": "tsc"
   },
   "dependencies": {
     "@blog-project/shared-types": "file:../shared",
