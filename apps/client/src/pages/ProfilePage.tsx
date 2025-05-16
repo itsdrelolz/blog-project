@@ -79,7 +79,7 @@ const ProfilePage = () => {
     const handleDelete = async (postId: number) => {
         await deletePost(postId);
         setUserPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-        navigate('/');
+    
     };
 
     return (
